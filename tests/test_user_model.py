@@ -18,6 +18,10 @@ class UserModelTestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
+    # def test_a_query_role(self):
+    #     u = User(email='john@example.com', password='cat')
+    #     u.query_role()
+
     def test_password_setter(self):
         u = User(password='cat')
         self.assertTrue(u.password_hash is not None)
