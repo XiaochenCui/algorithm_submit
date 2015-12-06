@@ -279,7 +279,7 @@ class Post(db.Model):
     body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    theme_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    # theme_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     @staticmethod
     def generate_fake(count=100):
@@ -305,12 +305,12 @@ class Post(db.Model):
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))
 
-class Theme(db.Model):
-    __tablename__ = 'themes'
-    id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(64), unique = True)
-    body = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index = True, default = datetime.utcnow())
-    posts = db.relationship('Post', backref = 'theme', lazy = 'dynamic')
+# class Theme(db.Model):
+#     __tablename__ = 'themes'
+#     id = db.Column(db.Integer, primary_key = True)
+#     name = db.Column(db.String(64), unique = True)
+#     body = db.Column(db.Text)
+#     timestamp = db.Column(db.DateTime, index = True, default = datetime.utcnow())
+#     posts = db.relationship('Post', backref = 'theme', lazy = 'dynamic')
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
