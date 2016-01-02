@@ -127,6 +127,11 @@ class User(UserMixin, db.Model):
                 self.email.encode('utf-8')).hexdigest()
         self.followed.append(Follow(followed=self))
 
+    def query_role(self):
+        role = Role.query.join(User, Role.id == User.role_id)\
+            .filter_by(id = self.id).first()
+        return role.name
+
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
@@ -206,9 +211,9 @@ class User(UserMixin, db.Model):
 
     def gravatar(self, size=100, default='identicon', rating='g'):
         if request.is_secure:
-            url = 'https://secure.gravatar.com/avatar'
+            url = current_app.config['PORTRAIT_DOMAIN']
         else:
-            url = 'http://www.gravatar.com/avatar'
+            url = current_app.config['PORTRAIT_DOMAIN']
         hash = self.avatar_hash or hashlib.md5(
             self.email.encode('utf-8')).hexdigest()
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
