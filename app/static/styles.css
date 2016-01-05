@@ -28,7 +28,7 @@ ul.posts li.post:hover {
 div.post-date {
     float: right;
 }
-div.post-author {
+div.post-author, {
     font-weight: bold;
 }
 div.post-thumbnail {
@@ -41,6 +41,47 @@ div.post-content {
 div.post-footer {
     text-align: right;
 }
+/* user_list css */
+ul.users {
+    list-style-type: none;
+    padding: 0px;
+    margin: 16px 0px 0px 0px;
+    border-top: 1px solid #e0e0e0;
+}
+ul.users {
+    margin: 0px;
+    border-top: none;
+}
+ul.users li.user {
+    padding: 8px;
+    border-bottom: 1px solid #e0e0e0;
+}
+ul.users li.user:hover {
+    background-color: #f0f0f0;
+}
+div.user-username {
+    font-weight: bold;
+}
+div.user-thumbnail {
+    position: absolute;
+}
+div.user-content {
+    margin-left: 48px;
+    min-height: 48px;
+}
+div.user-footer {
+    text-align: right;
+}
+
+/* user list tab css */
+div.user-tabs {
+    margin-top: 16px;
+}
+div.user-tabs {
+    margin: 0px;
+    border-top: none;
+}
+
 div.pagination {
     width: 100%;
     text-align: right;

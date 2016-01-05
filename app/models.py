@@ -14,7 +14,11 @@ class Permission:
     COMMENT = 0x02
     WRITE_ARTICLES = 0x04
     MODERATE_COMMENTS = 0x08
-    ADMINISTER = 0x80
+    MANAGE_ARTICLES = 0x10
+    MANAGE_THEME = 0x20
+    MANAGE_USER_RELATIONSHIP = 0x40
+    MANAGE_USER_ROLE = 0x80
+    ADMINISTER = 0x8000
 
 
 class Role(db.Model):
@@ -28,14 +32,17 @@ class Role(db.Model):
     @staticmethod
     def insert_roles():
         roles = {
-            'User': (Permission.FOLLOW |
+            'Student': (Permission.FOLLOW |
                      Permission.COMMENT |
                      Permission.WRITE_ARTICLES, True),
+            'Teacher': (Permission.MODERATE_COMMENTS |
+                        Permission.MANAGE_ARTICLES |
+                        Permission.MANAGE_THEME , False),
             'Moderator': (Permission.FOLLOW |
                           Permission.COMMENT |
                           Permission.WRITE_ARTICLES |
                           Permission.MODERATE_COMMENTS, False),
-            'Administrator': (0xff, False)
+            'Administrator': (0xffff, False)
         }
         for r in roles:
             role = Role.query.filter_by(name=r).first()
@@ -45,6 +52,19 @@ class Role(db.Model):
             role.default = roles[r][1]
             db.session.add(role)
         db.session.commit()
+
+    @staticmethod
+    def delete_roles(name = None):
+        if name is not None:
+            role = Role.query.filter_by(name=name).first()
+            if role is not None:
+                db.session.delete(role)
+        else:
+            roles = Role.query.all()
+            for role in roles:
+                if role is not None:
+                    db.session.delete(role)
+        db.session.commit
 
     def __repr__(self):
         return '<Role %r>' % self.name
@@ -115,17 +135,27 @@ class User(UserMixin, db.Model):
                 db.session.add(user)
                 db.session.commit()
 
+    # this method don't work
+    @staticmethod
+    def init_all():
+        for user in User.query.all():
+            user.__init__()
+            db.session.add(user)
+            db.session.commit()
+
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if self.role is None:
             if self.email == current_app.config['FLASKY_ADMIN']:
-                self.role = Role.query.filter_by(permissions=0xff).first()
+                self.role = Role.query.filter_by(permissions=0xffff).first()
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
         if self.email is not None and self.avatar_hash is None:
             self.avatar_hash = hashlib.md5(
                 self.email.encode('utf-8')).hexdigest()
-        self.followed.append(Follow(followed=self))
+        self_follow = Follow.query.filter_by(follower_id = self.id, followed_id = self.id).first()
+        if self_follow is None:
+            self.followed.append(Follow(followed=self))
 
     def query_role(self):
         role = Role.query.join(User, Role.id == User.role_id)\

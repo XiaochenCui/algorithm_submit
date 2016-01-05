@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}{{ super() }}teacher list{% endblock %}
+
+{% block page_content %}
+<div class="user-tabs">
+    <ul class="nav nav-tabs">
+        <li><a href="#">All teachers</a></li>
+    </ul>
+    {% include '_teachers.html' %}
+</div>
+{% endblock %}
