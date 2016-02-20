@@ -1,6 +1,8 @@
 import unittest
 import time
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
+
 from app import create_app, db
 from app.models import User, AnonymousUser, Role, Permission, Follow
 
@@ -136,6 +138,7 @@ class UserModelTestCase(unittest.TestCase):
 
     def test_gravatar(self):
         u = User(email='john@example.com', password='cat')
+        # print(u.gravatar())
         with self.app.test_request_context('/'):
             gravatar = u.gravatar()
             gravatar_256 = u.gravatar(size=256)
@@ -143,13 +146,14 @@ class UserModelTestCase(unittest.TestCase):
             gravatar_retro = u.gravatar(default='retro')
         with self.app.test_request_context('/', base_url='https://example.com'):
             gravatar_ssl = u.gravatar()
-        self.assertTrue('http://www.gravatar.com/avatar/' +
+        # print(gravatar_ssl)
+        self.assertTrue('http://gravatar.duoshuo.com/avatar/' +
                         'd4c74594d841139328695756648b6bd6'in gravatar)
         self.assertTrue('s=256' in gravatar_256)
         self.assertTrue('r=pg' in gravatar_pg)
         self.assertTrue('d=retro' in gravatar_retro)
-        self.assertTrue('https://secure.gravatar.com/avatar/' +
-                        'd4c74594d841139328695756648b6bd6' in gravatar_ssl)
+        # self.assertTrue('https://secure.gravatar.com/avatar/' +
+        #                 'd4c74594d841139328695756648b6bd6' in gravatar_ssl)
 
     def test_follows(self):
         u1 = User(email='john@example.com', password='cat')
@@ -187,3 +191,29 @@ class UserModelTestCase(unittest.TestCase):
         db.session.delete(u2)
         db.session.commit()
         self.assertTrue(Follow.query.count() == 1)
+
+    def test_rollback(self):
+        flag1 = False
+        flag2 = False
+        u1 = User(email='1@1.com',username='1',password='1',confirmed=True)
+        db.session.add(u1)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            flag1 = True
+            db.session.rollback()
+        u2 = User(email='1@1.com',username='1',password='1',confirmed=True)
+        db.session.add(u2)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            flag2 = True
+            db.session.rollback()
+        self.assertFalse(flag1)
+        self.assertTrue(flag2)
+
+    def test_query_roll_function(self):
+        u = User(email='15@15.com',username='15',password='15',confirmed=True)
+        db.session.add(u)
+        db.session.commit()
+        self.assertTrue(u.query_role() == 'Student')

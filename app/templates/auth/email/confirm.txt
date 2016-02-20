@@ -1,13 +1,13 @@
-Dear {{ user.username }},
+新用户 {{ user.username }},
 
-Welcome to Flasky!
+欢迎来到算法提交平台!
 
-To confirm your account please click on the following link:
+请点击链接完成认证：
 
 {{ url_for('auth.confirm', token=token, _external=True) }}
 
-Sincerely,
+衷心感谢您的加入！
 
-The Flasky Team
+管理员：崔晓晨
 
-Note: replies to this email address are not monitored.
+注意：请勿回复此邮件

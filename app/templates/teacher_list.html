@@ -1,13 +1,18 @@
 {% extends "base.html" %}
 {% import "_macros.html" as macros %}
 
-{% block title %}{{ super() }}teacher list{% endblock %}
+{% block title %}{{ super() }}教师列表{% endblock %}
 
 {% block page_content %}
 <div class="user-tabs">
     <ul class="nav nav-tabs">
-        <li><a href="#">All teachers</a></li>
+        <li><a href="#">所有教师</a></li>
     </ul>
     {% include '_teachers.html' %}
 </div>
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.teacher_list') }}
+</div>
+{% endif %}
 {% endblock %}

@@ -53,3 +53,9 @@ class EditProfileAdminForm(Form):
 class PostForm(Form):
     body = PageDownField("What's on your mind?", validators=[Required()])
     submit = SubmitField('Submit')
+
+
+class ThemeForm(Form):
+    title = StringField('Theme body:',validators=[Required()])
+    body = TextAreaField("Theme context:", validators=[Required()])
+    submit = SubmitField('Submit')

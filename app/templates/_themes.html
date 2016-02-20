@@ -1,0 +1,31 @@
+<ul class="themes">
+    {% for theme in themes %}
+    <li class="theme">
+        <div class="theme-thumbnail">
+            <a href="{{ url_for('.user', username=theme.author.username) }}">
+                <img class="img-rounded profile-thumbnail" src="{{ theme.author.gravatar(size=40) }}">
+            </a>
+        </div>
+        <div class="theme-content">
+            <div class="theme-date">{{ moment(theme.timestamp).fromNow() }}</div>
+            <div class="theme-author">
+                <a href="{{ url_for('.user', username=theme.author.username) }}">
+                    {{ theme.author.username }}
+                </a>
+            </div>
+            <div class="theme-body">{{ theme.body }}</div>
+            <div class="theme-footer">
+                <a href="{{ url_for('.theme_teacher', id=theme.id) }}">
+                    <span class="label label-primary">文章列表</span>
+                </a>
+                <a href="{{ url_for('.theme_edit', id=theme.id) }}">
+                    <span class="label label-info">编辑</span>
+                </a>
+                <a href="{{ url_for('.theme_delete', id=theme.id) }}">
+                    <span class="label label-warning">删除</span>
+                </a>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

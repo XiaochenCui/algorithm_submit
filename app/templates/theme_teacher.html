@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% import "_macros.html" as macros %}
 
-{% block title %}{{ super() }}文章{% endblock %}
+{% block title %}{{ super() }}主题{% endblock %}
 
 {% block page_content %}
+{% include '_themes.html' %}
 {% include '_posts.html' %}
 {% endblock %}

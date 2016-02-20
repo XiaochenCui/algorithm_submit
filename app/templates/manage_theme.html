@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}{{ super() }}主题列表{% endblock %}
+
+{% block page_content %}
+<div>
+    {% if current_user.can(Permission.MANAGE_THEME) %}
+    {{ wtf.quick_form(form) }}
+    {% endif %}
+</div>
+<div class="theme-tabs">
+    <ul class="nav nav-tabs">
+        <li><a href="#">所有主题</a></li>
+    </ul>
+    {% include '_themes.html' %}
+</div>
+{% endblock %}

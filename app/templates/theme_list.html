@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}{{ super() }}主题列表{% endblock %}
+
+{% block page_content %}
+<div class="theme-tabs">
+    <ul class="nav nav-tabs">
+        <li><a href="#">所有主题</a></li>
+    </ul>
+    {% include '_themes.html' %}
+</div>
+{% if pagination %}
+    {% if current_user.is_administrator() %}
+    <div class="pagination">
+        {{ macros.pagination_widget(pagination, '.theme_list') }}
+    </div>
+    {% elif current_user.query_role() == 'Student' %}
+    <div class="pagination">
+        {{ macros.pagination_widget(pagination, '.theme_list', id=current_user.id) }}
+    </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

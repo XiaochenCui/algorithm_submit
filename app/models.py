@@ -13,7 +13,7 @@ class Permission:
     FOLLOW = 0x01
     COMMENT = 0x02
     WRITE_ARTICLES = 0x04
-    MODERATE_COMMENTS = 0x08
+    MANAGE_COMMENTS = 0x08
     MANAGE_ARTICLES = 0x10
     MANAGE_THEME = 0x20
     MANAGE_USER_RELATIONSHIP = 0x40
@@ -33,15 +33,15 @@ class Role(db.Model):
     def insert_roles():
         roles = {
             'Student': (Permission.FOLLOW |
-                     Permission.COMMENT |
-                     Permission.WRITE_ARTICLES, True),
-            'Teacher': (Permission.MODERATE_COMMENTS |
+                        Permission.COMMENT |
+                        Permission.WRITE_ARTICLES, True),
+            'Teacher': (Permission.MANAGE_COMMENTS |
                         Permission.MANAGE_ARTICLES |
-                        Permission.MANAGE_THEME , False),
+                        Permission.MANAGE_THEME, False),
             'Moderator': (Permission.FOLLOW |
                           Permission.COMMENT |
                           Permission.WRITE_ARTICLES |
-                          Permission.MODERATE_COMMENTS, False),
+                          Permission.MANAGE_COMMENTS, False),
             'Administrator': (0xffff, False)
         }
         for r in roles:
@@ -54,7 +54,7 @@ class Role(db.Model):
         db.session.commit()
 
     @staticmethod
-    def delete_roles(name = None):
+    def delete_roles(name=None):
         if name is not None:
             role = Role.query.filter_by(name=name).first()
             if role is not None:
@@ -94,6 +94,7 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    themes = db.relationship('Theme', backref='author', lazy='dynamic')
     followed = db.relationship('Follow',
                                foreign_keys=[Follow.follower_id],
                                backref=db.backref('follower', lazy='joined'),
@@ -153,14 +154,13 @@ class User(UserMixin, db.Model):
         if self.email is not None and self.avatar_hash is None:
             self.avatar_hash = hashlib.md5(
                 self.email.encode('utf-8')).hexdigest()
-        self_follow = Follow.query.filter_by(follower_id = self.id, followed_id = self.id).first()
-        if self_follow is None:
-            self.followed.append(Follow(followed=self))
+        self.followed.append(Follow(followed=self))
 
     def query_role(self):
-        role = Role.query.join(User, Role.id == User.role_id)\
-            .filter_by(id = self.id).first()
-        return role.name
+        role = Role.query.join(User, Role.id == User.role_id) \
+            .filter_by(id=self.id).first()
+        return self.role is not None and \
+               role.name
 
     @property
     def password(self):
@@ -230,7 +230,7 @@ class User(UserMixin, db.Model):
 
     def can(self, permissions):
         return self.role is not None and \
-            (self.role.permissions & permissions) == permissions
+               (self.role.permissions & permissions) == permissions
 
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
@@ -269,7 +269,12 @@ class User(UserMixin, db.Model):
 
     @property
     def followed_posts(self):
-        return Post.query.join(Follow, Follow.followed_id == Post.author_id)\
+        return Post.query.join(Follow, Follow.followed_id == Post.author_id) \
+            .filter(Follow.follower_id == self.id)
+
+    @property
+    def followed_themes(self):
+        return Theme.query.join(Follow, Follow.followed_id == Theme.author_id) \
             .filter(Follow.follower_id == self.id)
 
     def __repr__(self):
@@ -282,6 +287,7 @@ class AnonymousUser(AnonymousUserMixin):
 
     def is_administrator(self):
         return False
+
 
 login_manager.anonymous_user = AnonymousUser
 
@@ -297,7 +303,9 @@ class Post(db.Model):
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    theme_id = db.Column(db.Integer, db.ForeignKey('themes.id'))
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    score = db.Column(db.Integer)
 
     @staticmethod
     def generate_fake(count=100):
@@ -306,10 +314,13 @@ class Post(db.Model):
 
         seed()
         user_count = User.query.count()
+        theme_count = Theme.query.count()
         for i in range(count):
             u = User.query.offset(randint(0, user_count - 1)).first()
+            t = Theme.query.offset(randint(0, theme_count - 1)).first()
             p = Post(body=forgery_py.lorem_ipsum.sentences(randint(1, 5)),
                      timestamp=forgery_py.date.date(True),
+                     theme=t,
                      author=u)
             db.session.add(p)
             db.session.commit()
@@ -323,4 +334,41 @@ class Post(db.Model):
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))
 
+    def __repr__(self):
+        return '<Post %r>' % self.body[0:6]
+
+
 db.event.listen(Post.body, 'set', Post.on_changed_body)
+
+
+class Theme(db.Model):
+    __tablename__ = 'themes'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64))
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    posts = db.relationship('Post', backref='theme', lazy='joined')
+
+    @staticmethod
+    def generate_fake(count=100):
+        from random import seed, randint
+        import forgery_py
+
+        seed()
+        user_count = User.query.count()
+        for i in range(count):
+            u = User.query.offset(randint(0, user_count - 1)).first()
+            t = Theme(title=forgery_py.lorem_ipsum.word(),
+                      body=forgery_py.lorem_ipsum.sentences(randint(1, 5)),
+                      timestamp=forgery_py.date.date(True),
+                      author=u)
+            db.session.add(t)
+            db.session.commit()
+
+    def __repr__(self):
+        return '<Theme %r>' % self.title
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
