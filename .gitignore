@@ -61,13 +61,8 @@ coverage.xml
 # Django stuff:
 *.log
 
-<<<<<<< HEAD
 # SQLite databases
 *.sqlite
-=======
-# Sphinx documentation
-docs/_build/
->>>>>>> 57dd28b2d478535759aebbba92bb0bcb22a916d4
 
 # PyBuilder
 target/
