@@ -218,12 +218,3 @@ class UserModelTestCase(unittest.TestCase):
         db.session.add(u)
         db.session.commit()
         self.assertTrue(u.query_role() == 'Student')
-
-    def test_mail_send(self):
-
-        with mail.record_messages() as outbox:
-            mail.send_message(subject='testing',
-                      body='test',
-                      recipients="jcnlcxc@163.com")
-            assert len(outbox) == 1
-            assert outbox[0].subject == "testing"

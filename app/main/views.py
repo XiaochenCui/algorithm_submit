@@ -4,7 +4,7 @@ from flask.ext.login import login_required, current_user
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm, ThemeForm
 from .. import db
-from ..models import Permission, Role, User, Post, Theme
+from ..models import Permission, Role, User, Post, Theme, Article, ArticleColumn
 from ..decorators import admin_required, permission_required
 
 
@@ -297,18 +297,8 @@ def theme_edit(id):
     form.body.data = theme.body
     return render_template('theme_edit.html', form=form)
 
-# @main.route('/edit/<int:id>', methods=['GET', 'POST'])
-# @login_required
-# def edit(id):
-#     post = Post.query.get_or_404(id)
-#     if current_user != post.author and \
-#             not current_user.can(Permission.ADMINISTER):
-#         abort(403)
-#     form = PostForm()
-#     if form.validate_on_submit():
-#         post.body = form.body.data
-#         db.session.add(post)
-#         flash('The post has been updated.')
-#         return redirect(url_for('.post', id=post.id))
-#     form.body.data = post.body
-#     return render_template('edit_post.html', form=form)
+@main.route('/column/<int:id>')
+def article_column(id):
+    column = ArticleColumn.query.filter_by(id=id).first()
+    articles = Article.query.filter_by(column=column).all()
+    return render_template('column.html', column=column, articles=articles)
