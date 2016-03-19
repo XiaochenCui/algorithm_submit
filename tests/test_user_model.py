@@ -2,6 +2,7 @@ import unittest
 import time
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
+from flask.ext import mail
 
 from app import create_app, db
 from app.models import User, AnonymousUser, Role, Permission, Follow
@@ -217,3 +218,12 @@ class UserModelTestCase(unittest.TestCase):
         db.session.add(u)
         db.session.commit()
         self.assertTrue(u.query_role() == 'Student')
+
+    def test_mail_send(self):
+
+        with mail.record_messages() as outbox:
+            mail.send_message(subject='testing',
+                      body='test',
+                      recipients="jcnlcxc@163.com")
+            assert len(outbox) == 1
+            assert outbox[0].subject == "testing"

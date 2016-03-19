@@ -36,10 +36,13 @@ nosetests.xml
 .pydevproject
 
 # SQLite databases
-#*.sqlite
+*.sqlite
 
 # Virtual environment
 venv
 
 #pycharm option file
 .idea
+
+#cache file
+*~

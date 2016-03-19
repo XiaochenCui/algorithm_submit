@@ -28,7 +28,7 @@ ul.posts li.post:hover {
 div.post-date {
     float: right;
 }
-div.post-author, {
+div.post-author{
     font-weight: bold;
 }
 div.post-thumbnail {
@@ -109,7 +109,7 @@ ul.themes li.theme:hover {
 div.theme-date {
     float: right;
 }
-div.theme-author, {
+div.theme-author {
     font-weight: bold;
 }
 div.theme-thumbnail {
