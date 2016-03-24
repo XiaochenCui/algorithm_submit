@@ -62,7 +62,7 @@ coverage.xml
 *.log
 
 # SQLite databases
-*.sqlite
+#*.sqlite
 
 # PyBuilder
 target/

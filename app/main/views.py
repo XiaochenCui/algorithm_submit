@@ -302,3 +302,25 @@ def article_column(id):
     column = ArticleColumn.query.filter_by(id=id).first()
     articles = Article.query.filter_by(column=column).all()
     return render_template('column.html', column=column, articles=articles)
+
+@main.route('/column_list')
+@login_required
+@admin_required
+def column_list():
+    columns = ArticleColumn.query.all()
+    return render_template('column_list.html', columns=columns)
+
+@main.route('/article_list/<int:id>')
+@admin_required
+def article_list(id):
+    pass
+
+@main.route('/article_edit')
+@admin_required
+def article_edit(id):
+    pass
+
+@main.route('/column_delete')
+@admin_required
+def column_delete(id):
+    pass

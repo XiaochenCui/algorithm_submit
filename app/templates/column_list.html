@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{{ super() }}栏目列表{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(document).ready(function () {
+            $(".normal").click(function () {
+                $(".edit").hide();
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block page_content %}
+    <div class="entry-tabs">
+        <ul class="nav nav-tabs">
+            <li><a href="#">所有栏目</a></li>
+        </ul>
+    </div>
+    <ul class="entries">
+        {% for column in columns %}
+            <li class="entry">
+                <div class="entry-content">
+                    <div class="entry-body">
+                        <span class="normal">
+                            {{ column.title }}
+                        </span>
+                        <span class="edit">
+                            <input id='inp18620' type="text" value=''/>
+                        </span>
+                    </div>
+                    <div class="entry-footer">
+                        <a href="{{ url_for('.article_list', id=column.id) }}">
+                            <span class="label label-primary">文章列表</span>
+                        </a>
+                        <a rel="edit" href="javascript:void(0)">
+                            <span class="label label-info">编辑</span>
+                        </a>
+                        <a rel="update" href="javascript:void(0)">
+                            <span class="label label-info">更新</span>
+                        </a>
+                        <a rel="cancel" href="javascript:void(0)">
+                            <span class="label label-info">取消</span>
+                        </a>
+                        <a href="{{ url_for('.column_delete', id=column.id) }}">
+                            <span class="label label-warning">删除</span>
+                        </a>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
