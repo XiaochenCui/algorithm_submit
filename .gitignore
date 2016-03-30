@@ -73,3 +73,5 @@ target/
 # Created by .ignore support plugin (hsz.mobi)
 
 *.py~
+
+wsgi_conf.ini
