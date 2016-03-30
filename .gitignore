@@ -74,4 +74,4 @@ target/
 
 *.py~
 
-wsgi_conf.ini
+wsgi_conf.ini*
