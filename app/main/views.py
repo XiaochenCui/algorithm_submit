@@ -1,13 +1,16 @@
+import ast
+import json
 import string
 
 from flask import render_template, redirect, url_for, abort, flash, request, \
     current_app, make_response, jsonify
 from flask.ext.login import login_required, current_user
+
 from . import main
-from .forms import EditProfileForm, EditProfileAdminForm, PostForm, ThemeForm
+from .forms import EditProfileForm, EditProfileAdminForm, PostForm, ThemeForm, ColumnTitleForm
 from .. import db
-from ..models import Permission, Role, User, Post, Theme, Article, ArticleColumn
 from ..decorators import admin_required, permission_required
+from ..models import Permission, Role, User, Post, Theme, Article, ArticleColumn
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -319,8 +322,9 @@ def article_column(id):
 @login_required
 @admin_required
 def column_list():
+    form = ColumnTitleForm()
     columns = ArticleColumn.query.all()
-    return render_template('column_list.html', columns=columns)
+    return render_template('column_list.html', columns=columns, form=form)
 
 
 @main.route('/article_list/<int:id>')
@@ -347,17 +351,13 @@ def echo():
     return jsonify(ret_data)
 
 
-@main.route('/column_title_set', methods=['POST'])
+@main.route('/column_title_set', methods=['POST', 'GET'])
 @admin_required
 def column_title():
-    try:
-        id = request.data.get('id')
-        title = request.args.get('title', type=string)
-        column = ArticleColumn.query.filter_by(id=id).first()
-        column.title = title
+    form = ColumnTitleForm()
+    if form.validate_on_submit():
+        column = ArticleColumn.query.filter_by(id=form.id.data).first()
+        column.title = form.title.data
         db.session.add(column)
-    except Exception:
-        return Exception
-    else:
-        data = {'title':title}
-        return jsonify(data)
+        flash('栏目标题已经被更新')
+    return render_template('column_list.html', form=form)

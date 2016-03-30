@@ -23,12 +23,14 @@
                             {{ column.title }}
                             <button>更改</button>
                         </span>
-                        <span class="edit">
-                            <input id='inp18620' type="text" value=''/>
-                            <button>保存</button>
-                        </span>
-                <input class="id" hidden="hidden" value="{{ column.id }}">
-                </input>
+                <span class="edit">
+                <form action="{{ url_for('main.column_title') }}" method="post" class="form-inline">
+                    {{ form.hidden_tag() }}
+                    {{ form.title() }}
+                    {{ form.id(hidden="hidden", value=column.id) }}
+                    {{ form.submit() }}
+                </form>
+                    </span>
             </div>
             <div class="entry-footer">
                 <a href="{{ url_for('.article_list', id=column.id) }}">
@@ -79,21 +81,6 @@
             $(this).parent().toggle();
         });
         $(".edit button").click(function () {
-            $.ajax({
-                type: "POST",
-                url: $SCRIPT_ROOT + "column_title_set",
-                contentType: "application/json; charset=utf-8",
-                data: {
-                    'id': $(this).parent().siblings(".id").val(),
-                    'title': $(this).siblings("input").val()
-                },
-                success: function (data) {
-                    $(this).parent().siblings(".normal").text(data.value);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert(errorThrown);
-                }
-            });
             $(this).parent().toggle();
             $(this).parent().siblings(".edit").toggle();
         });
