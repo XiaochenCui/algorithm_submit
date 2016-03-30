@@ -1,11 +1,16 @@
-from flask import render_template, redirect, url_for, abort, flash, request,\
-    current_app, make_response
+import ast
+import json
+import string
+
+from flask import render_template, redirect, url_for, abort, flash, request, \
+    current_app, make_response, jsonify
 from flask.ext.login import login_required, current_user
+
 from . import main
-from .forms import EditProfileForm, EditProfileAdminForm, PostForm, ThemeForm
+from .forms import EditProfileForm, EditProfileAdminForm, PostForm, ThemeForm, ColumnTitleForm
 from .. import db
-from ..models import Permission, Role, User, Post, Theme
 from ..decorators import admin_required, permission_required
+from ..models import Permission, Role, User, Post, Theme, Article, ArticleColumn
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -183,7 +188,7 @@ def followed_by(username):
 @login_required
 def show_all():
     resp = make_response(redirect(url_for('.index')))
-    resp.set_cookie('show_followed', '', max_age=30*24*60*60)
+    resp.set_cookie('show_followed', '', max_age=30 * 24 * 60 * 60)
     return resp
 
 
@@ -191,8 +196,9 @@ def show_all():
 @login_required
 def show_followed():
     resp = make_response(redirect(url_for('.index')))
-    resp.set_cookie('show_followed', '1', max_age=30*24*60*60)
+    resp.set_cookie('show_followed', '1', max_age=30 * 24 * 60 * 60)
     return resp
+
 
 @main.route('/teacher-list')
 @login_required
@@ -200,18 +206,20 @@ def teacher_list():
     users = User.query.join(Role).filter(Role.name == 'Teacher').all()
     return render_template('teacher_list.html', users=users)
 
+
 @main.route('/theme-list')
 @login_required
 def theme_list():
     themes = Theme.query.order_by(Theme.timestamp.desc())
     return render_template('theme_list.html', themes=themes)
 
+
 @main.route('/manage-theme/<int:id>', methods=['GET', 'POST'])
 @login_required
 def manage_theme(id):
     user = User.query.filter_by(id=id).first()
     if user is None or \
-            current_user.id != id:
+                    current_user.id != id:
         abort(404)
     form = ThemeForm()
     if current_user.can(Permission.MANAGE_THEME) and \
@@ -222,12 +230,13 @@ def manage_theme(id):
     themes = user.themes.order_by(Theme.timestamp.desc()).all()
     return render_template('manage_theme.html', form=form, user=user, themes=themes)
 
+
 @main.route('/theme-list-student/<int:id>')
 @login_required
 def theme_list_student(id):
     user = User.query.filter_by(id=id).first()
     if user is None or \
-            current_user.id != id:
+                    current_user.id != id:
         abort(404)
     page = request.args.get('page', 1, type=int)
     query = current_user.followed_themes
@@ -240,6 +249,7 @@ def theme_list_student(id):
     #     var = Post.query.join(Theme, Theme.id = Post.)
     return render_template('theme_list.html', user=user, themes=themes,
                            pagination=pagination)
+
 
 @main.route('/theme/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -255,6 +265,7 @@ def theme(id):
         return redirect(url_for('.theme', id=theme.id))
     return render_template('theme.html', form=form, themes=[theme])
 
+
 @main.route('/theme-teacher/<int:id>', methods=['GET', 'POST'])
 @permission_required(Permission.MANAGE_THEME)
 def theme_teacher(id):
@@ -263,6 +274,7 @@ def theme_teacher(id):
         abort(404)
     posts = Post.query.filter_by(theme=theme).all()
     return render_template('theme_teacher.html', themes=[theme], posts=posts)
+
 
 @main.route('/theme-delete/<int:id>', methods=['GET', 'POST'])
 def theme_delete(id):
@@ -276,6 +288,7 @@ def theme_delete(id):
     theme.delete()
     flash('主题删除成功！')
     return redirect(url_for('.theme_list'))
+
 
 @main.route('/theme-edit/<int:id>', methods=['GET', 'POST'])
 def theme_edit(id):
@@ -297,18 +310,54 @@ def theme_edit(id):
     form.body.data = theme.body
     return render_template('theme_edit.html', form=form)
 
-# @main.route('/edit/<int:id>', methods=['GET', 'POST'])
-# @login_required
-# def edit(id):
-#     post = Post.query.get_or_404(id)
-#     if current_user != post.author and \
-#             not current_user.can(Permission.ADMINISTER):
-#         abort(403)
-#     form = PostForm()
-#     if form.validate_on_submit():
-#         post.body = form.body.data
-#         db.session.add(post)
-#         flash('The post has been updated.')
-#         return redirect(url_for('.post', id=post.id))
-#     form.body.data = post.body
-#     return render_template('edit_post.html', form=form)
+
+@main.route('/column/<int:id>')
+def article_column(id):
+    column = ArticleColumn.query.filter_by(id=id).first()
+    articles = Article.query.filter_by(column=column).all()
+    return render_template('column.html', column=column, articles=articles)
+
+
+@main.route('/column_list')
+@login_required
+@admin_required
+def column_list():
+    form = ColumnTitleForm()
+    columns = ArticleColumn.query.all()
+    return render_template('column_list.html', columns=columns, form=form)
+
+
+@main.route('/article_list/<int:id>')
+@admin_required
+def article_list(id):
+    pass
+
+
+@main.route('/article_edit')
+@admin_required
+def article_edit(id):
+    pass
+
+
+@main.route('/column_delete')
+@admin_required
+def column_delete(id):
+    pass
+
+
+@main.route('/echo/', methods=['GET'])
+def echo():
+    ret_data = {"value": request.args.get('echoValue')}
+    return jsonify(ret_data)
+
+
+@main.route('/column_title_set', methods=['POST', 'GET'])
+@admin_required
+def column_title():
+    form = ColumnTitleForm()
+    if form.validate_on_submit():
+        column = ArticleColumn.query.filter_by(id=form.id.data).first()
+        column.title = form.title.data
+        db.session.add(column)
+        flash('栏目标题已经被更新')
+    return render_template('column_list.html', form=form)

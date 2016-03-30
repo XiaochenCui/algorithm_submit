@@ -95,6 +95,7 @@ class User(UserMixin, db.Model):
     avatar_hash = db.Column(db.String(32))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     themes = db.relationship('Theme', backref='author', lazy='dynamic')
+    article = db.relationship('Article', backref='author', lazy='dynamic')
     followed = db.relationship('Follow',
                                foreign_keys=[Follow.follower_id],
                                backref=db.backref('follower', lazy='joined'),
@@ -372,3 +373,31 @@ class Theme(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+
+class Article(db.Model):
+    __tablename__ = 'articles'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64))
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    article_column_id = db.Column(db.Integer, db.ForeignKey('article_columns.id'))
+    index = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Article %r>' % self.title
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+class ArticleColumn(db.Model):
+    __tablename__ = 'article_columns'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64))
+    article = db.relationship('Article', backref='column', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Article_Column %r>' % self.title

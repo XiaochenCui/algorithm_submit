@@ -59,3 +59,9 @@ class ThemeForm(Form):
     title = StringField('Theme body:',validators=[Required()])
     body = TextAreaField("Theme context:", validators=[Required()])
     submit = SubmitField('Submit')
+
+
+class ColumnTitleForm(Form):
+    title = StringField('', validators=[Required()])
+    id = StringField('', validators=[Required()])
+    submit = SubmitField('保存')

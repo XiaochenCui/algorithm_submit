@@ -1,157 +1,84 @@
-.profile-thumbnail {
-    position: absolute;
-}
 .profile-header {
     min-height: 260px;
     margin-left: 280px;
 }
-div.post-tabs {
-    margin-top: 16px;
-}
-ul.posts {
-    list-style-type: none;
-    padding: 0px;
-    margin: 16px 0px 0px 0px;
-    border-top: 1px solid #e0e0e0;
-}
-div.post-tabs ul.posts {
-    margin: 0px;
-    border-top: none;
-}
-ul.posts li.post {
-    padding: 8px;
-    border-bottom: 1px solid #e0e0e0;
-}
-ul.posts li.post:hover {
-    background-color: #f0f0f0;
-}
-div.post-date {
-    float: right;
-}
-div.post-author, {
-    font-weight: bold;
-}
-div.post-thumbnail {
-    position: absolute;
-}
-div.post-content {
-    margin-left: 48px;
-    min-height: 48px;
-}
+
 div.post-score {
-    float: left
-}
-div.post-footer {
-    text-align: right;
-}
-/* user_list css */
-ul.users {
-    list-style-type: none;
-    padding: 0px;
-    margin: 16px 0px 0px 0px;
-    border-top: 1px solid #e0e0e0;
-}
-ul.users {
-    margin: 0px;
-    border-top: none;
-}
-ul.users li.user {
-    padding: 8px;
-    border-bottom: 1px solid #e0e0e0;
-}
-ul.users li.user:hover {
-    background-color: #f0f0f0;
-}
-div.user-username {
-    font-weight: bold;
-}
-div.user-thumbnail {
-    position: absolute;
-}
-div.user-content {
-    margin-left: 48px;
-    min-height: 48px;
-}
-div.user-footer {
-    text-align: right;
+    float: left;
 }
 
-/* user list tab css */
-div.user-tabs {
-    margin-top: 16px;
-}
-div.user-tabs {
-    margin: 0px;
-    border-top: none;
-}
-
-/*theme list css*/
-div.theme-tabs {
-    margin-top: 16px;
-}
-ul.themes {
+ul.users, ul.posts, ul.themes, ul.entries {
     list-style-type: none;
-    padding: 0px;
-    margin: 16px 0px 0px 0px;
-    border-top: 1px solid #e0e0e0;
-}
-div.theme-tabs ul.themes {
-    margin: 0px;
     border-top: none;
-}
-ul.themes li.theme {
-    padding: 8px;
-    border-bottom: 1px solid #e0e0e0;
-}
-ul.themes li.theme:hover {
-    background-color: #f0f0f0;
-}
-div.theme-date {
-    float: right;
-}
-div.theme-author, {
-    font-weight: bold;
-}
-div.theme-thumbnail {
-    position: absolute;
-}
-div.theme-content {
-    margin-left: 48px;
-    min-height: 48px;
-}
-div.theme-footer {
-    text-align: right;
+    margin: 0;
+    padding: 0;
 }
 
 div.pagination {
     width: 100%;
     text-align: right;
-    padding: 0px;
-    margin: 0px;
+    margin: 0;
+    padding: 0;
 }
+
 div.flask-pagedown-preview {
-    margin: 10px 0px 10px 0px;
     border: 1px solid #e0e0e0;
+    margin: 10px 0;
     padding: 4px;
 }
-div.flask-pagedown-preview h1 {
-    font-size: 140%;
-}
-div.flask-pagedown-preview h2 {
-    font-size: 130%;
-}
-div.flask-pagedown-preview h3 {
-    font-size: 120%;
-}
-.post-body h1 {
-    font-size: 140%;
-}
-.post-body h2 {
-    font-size: 130%;
-}
-.post-body h3 {
-    font-size: 120%;
-}
+
 .table.followers tr {
     border-bottom: 1px solid #e0e0e0;
+}
+
+.profile-thumbnail, div.post-thumbnail, div.user-thumbnail, div.theme-thumbnail {
+    position: absolute;
+}
+
+div.post-tabs, div.user-tabs, div.theme-tabs, div.entry-tabs {
+    margin: 16px 0 0;
+    border-top: none;
+}
+
+li.post, li.user, li.theme, li.entry {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 8px;
+}
+
+ul.posts li.post:hover, ul.users li.user:hover, ul.themes li.theme:hover, ul.entries li.entry:hover {
+    background-color: #f0f0f0;
+}
+
+div.post-date, div.theme-date {
+    float: right;
+}
+
+div.post-author, div.user-username, div.theme-author {
+    font-weight: 700;
+}
+
+div.post-content, div.user-content, div.theme-content  {
+    margin-left: 48px;
+    min-height: 48px;
+}
+
+div.entry-content{
+    margin-left: 5px;
+    height: 50px;
+}
+
+div.post-footer, div.user-footer, div.theme-footer, div.entry-footer {
+    text-align: right;
+}
+
+div.flask-pagedown-preview h1, .post-body h1 {
+    font-size: 140%;
+}
+
+div.flask-pagedown-preview h2, .post-body h2 {
+    font-size: 130%;
+}
+
+div.flask-pagedown-preview h3, .post-body h3 {
+    font-size: 120%;
 }

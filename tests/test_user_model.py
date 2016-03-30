@@ -2,6 +2,7 @@ import unittest
 import time
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
+from flask.ext import mail
 
 from app import create_app, db
 from app.models import User, AnonymousUser, Role, Permission, Follow
