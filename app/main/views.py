@@ -351,7 +351,7 @@ def echo():
     return jsonify(ret_data)
 
 
-@main.route('/column_title_set', methods=['POST', 'GET'])
+@main.route('/column_title', methods=['POST', 'GET'])
 @admin_required
 def column_title():
     form = ColumnTitleForm()
