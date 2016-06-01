@@ -217,4 +217,4 @@ class UserModelTestCase(unittest.TestCase):
         u = User(email='15@15.com',username='15',password='15',confirmed=True)
         db.session.add(u)
         db.session.commit()
-        self.assertTrue(u.query_role() == 'Student')
+        self.assertTrue(u.role() == 'Student')

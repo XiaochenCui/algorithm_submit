@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, TextAreaField, BooleanField, SelectField,\
+from wtforms import StringField, TextAreaField, BooleanField, SelectField, \
     SubmitField
 from wtforms.validators import Required, Length, Email, Regexp
 from wtforms import ValidationError
@@ -56,7 +56,7 @@ class PostForm(Form):
 
 
 class ThemeForm(Form):
-    title = StringField('Theme body:',validators=[Required()])
+    title = StringField('Theme body:', validators=[Required()])
     body = TextAreaField("Theme context:", validators=[Required()])
     submit = SubmitField('Submit')
 
@@ -64,4 +64,9 @@ class ThemeForm(Form):
 class ColumnTitleForm(Form):
     title = StringField('', validators=[Required()])
     id = StringField('', validators=[Required()])
+    submit = SubmitField('保存')
+
+
+class ColumnAddForm(Form):
+    title = StringField('', validators=[Required()])
     submit = SubmitField('保存')

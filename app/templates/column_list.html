@@ -8,29 +8,23 @@
         <li><a href="#">所有栏目</a></li>
     </ul>
 </div>
-<strong>Enter a value to echo back:</strong>
-<input size="10" id="echoText" name="echoText" type="text">
-<button type="button" id="submitBtn" name="submitBtn">Submit via AJAX</button><br><br>
-<strong>
-    <div id="echoResult"></div>
-</strong>
 <ul class="entries">
     {% for column in columns %}
     <li class="entry">
         <div class="entry-content">
             <div class="entry-body">
                         <span class="normal">
-                            {{ column.title }}
+                            <div class="column-title" style="display: inline">
+                                {{ column.title }}
+                            </div>
                             <button>更改</button>
                         </span>
-                <span class="edit">
-                <form action="" method="post" class="form-inline">
-                    {{ form.hidden_tag() }}
-                    {{ form.title() }}
-                    {{ form.id(hidden="hidden", value=column.id) }}
-                    {{ form.submit() }}
-                </form>
-                    </span>
+                        <span class="edit">
+                            <input class="id" hidden="hidden" value="{{ column.id }}">
+                            <input class="title" type="text" value='{{ column.title }}'>
+                            <button class="save">保存</button>
+                            <button class="cancel">取消</button>
+                        </span>
             </div>
             <div class="entry-footer">
                 <a href="{{ url_for('.article_list', id=column.id) }}">
@@ -58,87 +52,47 @@
 {% block scripts %}
 {{ super() }}
 <script>
-    $(function () {
-        $("#submitBtn").click(function () {
-            $.ajax({
-                type: "GET",
-                url: "/echo/",
-                contentType: "application/json; charset=utf-8",
-                data: {echoValue: $('input[name="echoText"]').val()},
-                success: function (data) {
-                    $('#echoResult').text(data.value);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert(errorThrown);
-                }
-            });
-        });
-    });
-    $(document).ready(function () {
+    $(window).load(function () {
         $(".edit").hide();
-
-        var options = {
-//            target: '#output1',   // target element(s) to be updated with server response
-            beforeSubmit: showRequest,  // pre-submit callback
-            success: showResponse,  // post-submit callback
-
-            // other available options:
-            url: "/column_title/"        // override for form's 'action' attribute
-            //type:      type        // 'get' or 'post', override for form's 'method' attribute
-            //dataType:  null        // 'xml', 'script', or 'json' (expected server response type)
-            //clearForm: true        // clear all form fields after successful submit
-            //resetForm: true        // reset the form after successful submit
-
-            // $.ajax options can be used here too, for example:
-            //timeout:   3000
-        };
-
-        // bind form using 'ajaxForm'
-        $('.form-inline').ajaxForm(options);
     });
 
     $(".normal button").click(function () {
         $(this).parent().siblings(".edit").toggle();
         $(this).parent().toggle();
     });
-    $(".edit button").click(function () {
 
-
-        $(this).parent().toggle();
-        $(this).parent().siblings(".edit").toggle();
+    $(".save").click(function () {
+        var target = $(this);
+        var _id = $(this).siblings(".id");
+        console.log(_id);
+        console.log(_id.val());
+        console.log(_id.attr("value"));
+        $.ajax({
+            type: "GET",
+            url: $SCRIPT_ROOT + "column_title",
+            contentType: "application/json; charset=utf-8",
+            data: {
+                /*  use attr("value") rather than val(), see also Properties and Attributes in HTML
+                    (http://stackoverflow.com/questions/6003819/properties-and-attributes-in-html)
+                */
+                id: $(this).siblings(".id").attr("value"),
+                title: $(this).siblings(".title").val()
+            },
+            success: function (data) {
+                target.parent().siblings(".normal").children(".column-title").text(data.title);
+                target.parent().toggle();
+                target.parent().siblings(".normal").toggle();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
     });
 
-    function showRequest(formData, jqForm, options) {
-        // formData is an array; here we use $.param to convert it to a string to display it
-        // but the form plugin does this for you automatically when it submits the data
-        var queryString = $.param(formData);
+    $(".cancel").click(function () {
+        $(this).parent().toggle();
+        $(this).parent().siblings(".normal").toggle()
+    })
 
-        // jqForm is a jQuery object encapsulating the form element.  To access the
-        // DOM element for the form do this:
-        // var formElement = jqForm[0];
-
-        alert('About to submit: \n\n' + queryString);
-
-        // here we could return false to prevent the form from being submitted;
-        // returning anything other than false will allow the form submit to continue
-        return true;
-    }
-
-    // post-submit callback
-    function showResponse(responseText, statusText, xhr, $form) {
-        // for normal html responses, the first argument to the success callback
-        // is the XMLHttpRequest object's responseText property
-
-        // if the ajaxForm method was passed an Options Object with the dataType
-        // property set to 'xml' then the first argument to the success callback
-        // is the XMLHttpRequest object's responseXML property
-
-        // if the ajaxForm method was passed an Options Object with the dataType
-        // property set to 'json' then the first argument to the success callback
-        // is the json data object returned by the server
-
-        alert('status: ' + statusText + '\n\nresponseText: \n' + responseText +
-                '\n\nThe output div should have already been updated with the responseText.');
-    }
 </script>
 {% endblock %}

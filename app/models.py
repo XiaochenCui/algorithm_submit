@@ -1,5 +1,7 @@
 from datetime import datetime
 import hashlib
+
+from sqlalchemy.orm import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from markdown import markdown
@@ -27,6 +29,7 @@ class Role(db.Model):
     name = db.Column(db.String(64), unique=True)
     default = db.Column(db.Boolean, default=False, index=True)
     permissions = db.Column(db.Integer)
+
     users = db.relationship('User', backref='role', lazy='dynamic')
 
     @staticmethod
@@ -84,7 +87,9 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
+
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
     name = db.Column(db.String(64))
@@ -93,9 +98,13 @@ class User(UserMixin, db.Model):
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
+
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+
     themes = db.relationship('Theme', backref='author', lazy='dynamic')
+
     article = db.relationship('Article', backref='author', lazy='dynamic')
+
     followed = db.relationship('Follow',
                                foreign_keys=[Follow.follower_id],
                                backref=db.backref('follower', lazy='joined'),
@@ -156,12 +165,6 @@ class User(UserMixin, db.Model):
             self.avatar_hash = hashlib.md5(
                 self.email.encode('utf-8')).hexdigest()
         self.followed.append(Follow(followed=self))
-
-    def query_role(self):
-        role = Role.query.join(User, Role.id == User.role_id) \
-            .filter_by(id=self.id).first()
-        return self.role is not None and \
-               role.name
 
     @property
     def password(self):

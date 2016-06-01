@@ -7,7 +7,7 @@ from flask import render_template, redirect, url_for, abort, flash, request, \
 from flask.ext.login import login_required, current_user
 
 from . import main
-from .forms import EditProfileForm, EditProfileAdminForm, PostForm, ThemeForm, ColumnTitleForm
+from .forms import *
 from .. import db
 from ..decorators import admin_required, permission_required
 from ..models import Permission, Role, User, Post, Theme, Article, ArticleColumn
@@ -35,6 +35,8 @@ def index():
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
+
+
     return render_template('index.html', form=form, posts=posts,
                            show_followed=show_followed, pagination=pagination)
 
@@ -345,19 +347,30 @@ def column_delete(id):
     pass
 
 
-@main.route('/echo/', methods=['GET'])
-def echo():
-    ret_data = {"value": request.args.get('echoValue')}
-    return jsonify(ret_data)
-
-
 @main.route('/column_title', methods=['POST', 'GET'])
 @admin_required
 def column_title():
-    form = ColumnTitleForm()
+    ret_data = {"id": request.args.get('id'),
+                "title": request.args.get('title')
+                }
+    column = ArticleColumn.query.filter_by(id=ret_data["id"]).first()
+    column.title = ret_data["title"]
+    db.session.add(column)
+    flash('栏目标题已经被更新')
+    return jsonify(ret_data)
+
+
+@main.route('/column_add', methods=['POST', 'GET'])
+@admin_required
+def column_add():
+    form = ColumnAddForm()
     if form.validate_on_submit():
-        column = ArticleColumn.query.filter_by(id=form.id.data).first()
-        column.title = form.title.data
+        column = ArticleColumn(title = form.data.title)
         db.session.add(column)
-        flash('栏目标题已经被更新')
-    return render_template('column_list.html', form=form)
+        flash('栏目添加成功！')
+    else:
+        flash('栏目添加失败！')
+    return redirect(url_for(column_list))
+
+
+

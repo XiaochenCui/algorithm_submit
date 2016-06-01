@@ -82,3 +82,7 @@ div.flask-pagedown-preview h2, .post-body h2 {
 div.flask-pagedown-preview h3, .post-body h3 {
     font-size: 120%;
 }
+
+div.add-column {
+    padding: 10px;
+}

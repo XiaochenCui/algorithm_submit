@@ -13,11 +13,40 @@
     {{ wtf.quick_form(form) }}
     {% endif %}
 </div>
+<div id="theme-undone">
+    <ul class="themes">
+        {% for theme in themes_undone %}
+        <li class="theme">
+            <div class="theme-thumbnail">
+                <a href="{{ url_for('.user', username=theme.author.username) }}">
+                    <img class="img-rounded profile-thumbnail" src="{{ theme.author.gravatar(size=40) }}">
+                </a>
+            </div>
+            <div class="theme-content">
+                <div class="theme-date">{{ moment(theme.timestamp).fromNow() }}</div>
+                <div class="theme-author">
+                    <a href="{{ url_for('.user', username=theme.author.username) }}">
+                        {{ theme.author.username }}
+                    </a>
+                </div>
+                <div class="theme-body">{{ theme.body }}</div>
+                <div class="theme-footer">
+                    <a href="{{ url_for('.theme_student', id=theme.id) }}">
+                        <span class="label label-primary">查看</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 <div class="post-tabs">
     <ul class="nav nav-tabs">
-        <li{% if not show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_all') }}">所有</a></li>
+        <li
+                {% if not show_followed %} class="active" {% endif %}><a href="{{ url_for('.show_all') }}">所有</a></li>
         {% if current_user.is_authenticated %}
-        <li{% if show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_followed') }}">关注者</a></li>
+        <li
+                {% if show_followed %} class="active" {% endif %}><a href="{{ url_for('.show_followed') }}">关注者</a></li>
         {% endif %}
     </ul>
     {% include '_posts.html' %}

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import os
 from app import create_app, db
 from app.models import User, Follow, Role, Permission, Post, Theme, Article, ArticleColumn
@@ -22,6 +21,14 @@ def test():
     """Run the unit tests."""
     import unittest
     tests = unittest.TestLoader().discover('tests')
+    unittest.TextTestRunner(verbosity=2).run(tests)
+
+
+@manager.command
+def test_temp():
+    """Run the unit tests."""
+    import unittest
+    tests = unittest.TestLoader().discover('tests/tests_temp')
     unittest.TextTestRunner(verbosity=2).run(tests)
 
 
