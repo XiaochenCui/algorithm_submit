@@ -13,33 +13,67 @@
     {{ wtf.quick_form(form) }}
     {% endif %}
 </div>
-<div id="theme-undone">
-    <ul class="themes">
+{% if themes_undone %}
+<div class="themes-undone">
+    <div class="post-tabs">
+        <ul class="nav nav-tabs">
+            <li class="active">
+                未完成的课题
+            </li>
+        </ul>
+    </div>
+    <ul class="list-group">
         {% for theme in themes_undone %}
-        <li class="theme">
-            <div class="theme-thumbnail">
-                <a href="{{ url_for('.user', username=theme.author.username) }}">
-                    <img class="img-rounded profile-thumbnail" src="{{ theme.author.gravatar(size=40) }}">
-                </a>
-            </div>
-            <div class="theme-content">
-                <div class="theme-date">{{ moment(theme.timestamp).fromNow() }}</div>
-                <div class="theme-author">
-                    <a href="{{ url_for('.user', username=theme.author.username) }}">
-                        {{ theme.author.username }}
-                    </a>
+        <a href="{{ url_for('.theme_list_student', id=theme.id) }}">
+            <li class="list-group-item">
+
+                <div class="theme-thumbnail">
+                        <img class="img-rounded profile-thumbnail" src="{{ theme.author.gravatar(size=40) }}">
                 </div>
-                <div class="theme-body">{{ theme.body }}</div>
-                <div class="theme-footer">
-                    <a href="{{ url_for('.theme_student', id=theme.id) }}">
-                        <span class="label label-primary">查看</span>
-                    </a>
+                <div class="theme-content">
+                    <div class="theme-date">{{ moment(theme.timestamp).fromNow() }}</div>
+                    <div class="theme-author">
+                            {{ theme.author.username }}
+                    </div>
+                    <div class="theme-body">{{ theme.body }}</div>
                 </div>
-            </div>
-        </li>
+            </li>
+        </a>
         {% endfor %}
     </ul>
 </div>
+{% endif %}
+
+{% if themes_done %}
+<div class="themes-done">
+    <div class="post-tabs">
+        <ul class="nav nav-tabs">
+            <li class="active">
+                已完成的课题
+            </li>
+        </ul>
+    </div>
+    <ul class="list-group">
+        {% for theme in themes_done %}
+        <a href="{{ url_for('.theme_list_student', id=theme.id) }}">
+            <li class="list-group-item">
+                <div class="theme-thumbnail">
+                        <img class="img-rounded profile-thumbnail" src="{{ theme.author.gravatar(size=40) }}">
+                </div>
+                <div class="theme-content">
+                    <div class="theme-date">{{ moment(theme.timestamp).fromNow() }}</div>
+                    <div class="theme-author">
+                            {{ theme.author.username }}
+                    </div>
+                    <div class="theme-body">{{ theme.body }}</div>
+                </div>
+            </li>
+        </a>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
 <div class="post-tabs">
     <ul class="nav nav-tabs">
         <li
@@ -60,5 +94,5 @@
 
 {% block scripts %}
 {{ super() }}
-{{ pagedown.include_pagedown() }}
+
 {% endblock %}

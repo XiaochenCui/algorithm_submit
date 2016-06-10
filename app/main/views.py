@@ -1,7 +1,3 @@
-import ast
-import json
-import string
-
 from flask import render_template, redirect, url_for, abort, flash, request, \
     current_app, make_response, jsonify
 from flask.ext.login import login_required, current_user
@@ -10,12 +6,13 @@ from . import main
 from .forms import *
 from .. import db
 from ..decorators import admin_required, permission_required
-from ..models import Permission, Role, User, Post, Theme, Article, ArticleColumn
+from ..models import Permission, Role, User, Post, Theme, Article, ArticleColumn, Follow
 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = PostForm()
+
     if current_user.can(Permission.WRITE_ARTICLES) and \
             form.validate_on_submit():
         post = Post(body=form.body.data,
@@ -23,10 +20,22 @@ def index():
                     author=current_user._get_current_object())
         db.session.add(post)
         return redirect(url_for('.index'))
+
     page = request.args.get('page', 1, type=int)
     show_followed = False
+    themes_undone = None
+    themes_done = None
+
     if current_user.is_authenticated:
+        if current_user.role.name == 'Student':
+            themes_queryset = current_user.followed_themes
+            themes = themes_queryset.order_by(Theme.timestamp.desc())
+            # all()方法将Basequery对象转为list
+            themes_done = current_user.done_themes.order_by(Theme.timestamp.desc()).all()
+            themes_undone = [t for t in themes if t not in themes_done]
+
         show_followed = bool(request.cookies.get('show_followed', ''))
+
     if show_followed:
         query = current_user.followed_posts
     else:
@@ -36,9 +45,13 @@ def index():
         error_out=False)
     posts = pagination.items
 
-
-    return render_template('index.html', form=form, posts=posts,
-                           show_followed=show_followed, pagination=pagination)
+    return render_template('index.html',
+                           form=form,
+                           themes_undone=themes_undone,
+                           themes_done=themes_done,
+                           posts=posts,
+                           show_followed=show_followed,
+                           pagination=pagination)
 
 
 @main.route('/user/<username>')
@@ -313,11 +326,19 @@ def theme_edit(id):
     return render_template('theme_edit.html', form=form)
 
 
-@main.route('/column/<int:id>')
-def article_column(id):
-    column = ArticleColumn.query.filter_by(id=id).first()
-    articles = Article.query.filter_by(column=column).all()
-    return render_template('column.html', column=column, articles=articles)
+@main.route('/column/<int:c_id>')
+@main.route('/column/<int:c_id>/<int:a_id>')
+def article_column(c_id, a_id:int = None):
+    column = ArticleColumn.query.filter_by(id=c_id).first()
+    articles_queryset = Article.query.filter_by(column=column)
+    articles = articles_queryset.all()
+    article = articles_queryset.filter_by(id=a_id).first()
+    if not article:
+        article = articles_queryset.first()
+    return render_template('column.html',
+                           column=column,
+                           articles=articles,
+                           article=article)
 
 
 @main.route('/column_list')

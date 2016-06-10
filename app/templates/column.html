@@ -4,8 +4,19 @@
 
 {% block page_content %}
 <div class="nav">
-    <ul class="nav nav-pills nav-stacked">
-        
+    <ul class="nav nav-pills nav-stacked nav_article">
+        {% for article in articles %}
+        <li><a href="{{ url_for('main.article_column', c_id=column.id, a_id=article.id) }}">{{ article.title }}</a></li>
+        {% endfor %}
     </ul>
+</div>
+<div class="article">
+    <div class="article-body">
+        {% if article.body_html %}
+        {{ article.body_html | safe }}
+        {% else %}
+        {{ article.body }}
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

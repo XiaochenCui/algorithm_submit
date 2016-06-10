@@ -1,3 +1,15 @@
+a, a:focus, a:hover{
+    text-decoration: none;
+}
+
+a li {
+    color: #333;
+}
+
+a li:hover{
+    background-color: #5bb7b7;
+}
+
 .profile-header {
     min-height: 260px;
     margin-left: 280px;
@@ -85,4 +97,23 @@ div.flask-pagedown-preview h3, .post-body h3 {
 
 div.add-column {
     padding: 10px;
+}
+
+div.nav {
+    display: inline-block;
+    width: 20%;
+    margin-left:5%;
+}
+
+div.article{
+    width: 60%;
+    float: right;
+    margin: 20px 12% 20px 20px;
+}
+
+div.themes-undone, div.themes-done{
+    display: inline-block;
+    width: 30%;
+    margin-top: 20px;
+    margin-right: 40px;
 }

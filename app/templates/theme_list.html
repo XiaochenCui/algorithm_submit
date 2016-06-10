@@ -11,11 +11,11 @@
     {% include '_themes.html' %}
 </div>
 {% if pagination %}
-    {% if current_user.is_administrator() %}
+    {% if current_user.is_administrator %}
     <div class="pagination">
         {{ macros.pagination_widget(pagination, '.theme_list') }}
     </div>
-    {% elif current_user.query_role() == 'Student' %}
+    {% elif current_user.role.name == 'Student' %}
     <div class="pagination">
         {{ macros.pagination_widget(pagination, '.theme_list', id=current_user.id) }}
     </div>

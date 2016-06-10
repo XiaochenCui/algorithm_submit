@@ -1,6 +1,7 @@
 from datetime import datetime
 import hashlib
 
+from flask.ext.sqlalchemy import BaseQuery
 from sqlalchemy.orm import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -8,6 +9,8 @@ from markdown import markdown
 import bleach
 from flask import current_app, request
 from flask.ext.login import UserMixin, AnonymousUserMixin
+
+from app.tool.list_operation import MyList
 from . import db, login_manager
 
 
@@ -236,6 +239,7 @@ class User(UserMixin, db.Model):
         return self.role is not None and \
                (self.role.permissions & permissions) == permissions
 
+    @property
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
 
@@ -281,6 +285,15 @@ class User(UserMixin, db.Model):
         return Theme.query.join(Follow, Follow.followed_id == Theme.author_id) \
             .filter(Follow.follower_id == self.id)
 
+    @property
+    def done_themes(self):
+        return self.followed_themes.join(Post, Post.theme_id == Theme.id) \
+            .filter(Post.author_id == self.id)
+
+    @property
+    def undone_themes(self):
+        pass
+
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -289,6 +302,7 @@ class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
         return False
 
+    @property
     def is_administrator(self):
         return False
 
@@ -383,6 +397,7 @@ class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
     body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     article_column_id = db.Column(db.Integer, db.ForeignKey('article_columns.id'))
@@ -394,6 +409,17 @@ class Article(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p']
+        target.body_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+
+db.event.listen(Article.body, 'set', Article.on_changed_body)
 
 
 class ArticleColumn(db.Model):
