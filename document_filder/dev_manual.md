@@ -1,8 +1,8 @@
 ## 测试帐号 
 
-**学生**  
-student@test.com  
-密码: 123  
+－**学生**  
+    student@test.com  
+    密码: 123  
 
 **教师**  
 teacher@test.com  
