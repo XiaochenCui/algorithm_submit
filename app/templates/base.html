@@ -50,6 +50,7 @@
                         {% endif %}
                         <li role="separator" class="divider"></li>
                         {% if current_user.is_administrator %}
+                        <li><a href="{{ url_for('admin.index') }}">后台</a></li>
                         <li><a href="{{ url_for('main.theme_list') }}">管理主题</a></li>
                         <li><a href="{{ url_for('main.column_list') }}">管理栏目</a></li>
                         <li role="separator" class="divider"></li>

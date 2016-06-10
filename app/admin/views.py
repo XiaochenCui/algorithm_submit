@@ -4,6 +4,7 @@ from flask.ext.admin.contrib import sqla
 import flask_admin as admin
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import expose
+from flask_admin.base import MenuLink, Admin, BaseView, expose
 
 from app.models import *
 
@@ -73,6 +74,9 @@ class MyAdminIndexView(admin.AdminIndexView):
 
 
 admin = admin.Admin(name='Admin', index_view=MyAdminIndexView(), template_mode='bootstrap3',)
+
+# 增加主页链接
+admin.add_link(MenuLink(name='Back Home', url='/'))
 
 admin.add_view(AdminModelView(Role, db.session))
 admin.add_view(UserView(User, db.session))

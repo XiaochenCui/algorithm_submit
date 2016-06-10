@@ -1,0 +1,14 @@
+<a href="{{ url_for('.theme_student', id=theme.id) }}">
+    <li class="list-group-item">
+        <div class="theme-thumbnail">
+            <img class="img-rounded profile-thumbnail" src="{{ theme.author.gravatar(size=40) }}">
+        </div>
+        <div class="theme-content">
+            <div class="theme-date">{{ moment(theme.timestamp).fromNow() }}</div>
+            <div class="theme-author">
+                {{ theme.title }}
+            </div>
+            <div class="theme-body">{{ theme.body }}</div>
+        </div>
+    </li>
+</a>

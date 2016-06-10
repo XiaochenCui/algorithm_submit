@@ -10,7 +10,7 @@
             <div class="theme-date">{{ moment(theme.timestamp).fromNow() }}</div>
             <div class="theme-author">
                 <a href="{{ url_for('.user', username=theme.author.username) }}">
-                    {{ theme.author.username }}
+                    {{ theme.title }}
                 </a>
             </div>
             <div class="theme-body">{{ theme.body }}</div>

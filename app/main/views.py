@@ -45,6 +45,7 @@ def index():
         error_out=False)
     posts = pagination.items
 
+
     return render_template('index.html',
                            form=form,
                            themes_undone=themes_undone,
@@ -289,6 +290,21 @@ def theme_teacher(id):
         abort(404)
     posts = Post.query.filter_by(theme=theme).all()
     return render_template('theme_teacher.html', themes=[theme], posts=posts)
+
+
+@main.route('/theme-student/<int:id>')
+@login_required
+def theme_student(id):
+    theme = Theme.query.get_or_404(id)
+    form = PostForm()
+    if current_user.can(Permission.WRITE_ARTICLES) and \
+            form.validate_on_submit():
+        post = Post(body=form.body.data,
+                    theme=theme,
+                    author=current_user._get_current_object())
+        db.session.add(post)
+        return redirect(url_for('.theme', id=theme.id))
+    return render_template('theme.html', form=form, themes=[theme])
 
 
 @main.route('/theme-delete/<int:id>', methods=['GET', 'POST'])
