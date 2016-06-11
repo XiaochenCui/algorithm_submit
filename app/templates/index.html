@@ -8,6 +8,7 @@
 <div class="page-header">
     <h1>你好, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}匿名用户{% endif %}!</h1>
 </div>
+{% if current_user.is_authenticated %}
 {% if themes_undone %}
 <div class="themes-undone">
     <div class="post-tabs">
@@ -49,6 +50,7 @@
     </ul>
     {% include '_themes.html' %}
 </div>
+{% endif %}
 {% endif %}
 
 {% endblock %}
