@@ -12,7 +12,7 @@ from app.models import *
 class AdminModelView(sqla.ModelView):
 
     def is_accessible(self):
-        if current_app.config['DEBUG']:
+        if not current_app.config['PRODUCTION']:
             return True
         else:
             return current_user.is_administrator
@@ -43,6 +43,8 @@ class UserView(AdminModelView):
 class ThemeView(AdminModelView):
     # 不可见的列
     column_exclude_list = ['timestamp']
+    # inline 编辑
+    inline_models = (Post,)
 
 
 class ColumnView(AdminModelView):
@@ -57,7 +59,7 @@ class MyAdminIndexView(admin.AdminIndexView):
 
     @expose('/')
     def index(self):
-        if current_app.config['DEBUG']:
+        if not current_app.config['PRODUCTION']:
             return super(MyAdminIndexView, self).index()
         else:
             if current_user.is_authenticated:

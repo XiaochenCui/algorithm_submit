@@ -14,6 +14,7 @@
                 </a>
             </div>
             <div class="theme-body">{{ theme.body }}</div>
+            {% if current_user.id == theme.author.id %}
             <div class="theme-footer">
                 <a href="{{ url_for('.theme_teacher', id=theme.id) }}">
                     <span class="label label-primary">文章列表</span>
@@ -25,6 +26,7 @@
                     <span class="label label-warning">删除</span>
                 </a>
             </div>
+            {% endif %}
         </div>
     </li>
     {% endfor %}

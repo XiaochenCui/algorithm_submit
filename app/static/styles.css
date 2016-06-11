@@ -22,7 +22,6 @@ div.post-score {
 ul.users, ul.posts, ul.themes, ul.entries {
     list-style-type: none;
     border-top: none;
-    margin: 0;
     padding: 0;
 }
 
@@ -112,8 +111,17 @@ div.article{
 }
 
 div.themes-undone, div.themes-done{
-    display: inline-block;
+    display: inline-table;
     width: 30%;
     margin-top: 20px;
     margin-right: 40px;
+}
+
+form.post {
+    margin-top: 20px;
+}
+
+div.content {
+    width: 80%;
+    margin: 0 auto;
 }

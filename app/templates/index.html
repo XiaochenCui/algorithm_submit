@@ -8,11 +8,6 @@
 <div class="page-header">
     <h1>你好, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}匿名用户{% endif %}!</h1>
 </div>
-<div>
-    {% if current_user.can(Permission.WRITE_ARTICLES) %}
-    <!--{{ wtf.quick_form(form) }}-->
-    {% endif %}
-</div>
 {% if themes_undone %}
 <div class="themes-undone">
     <div class="post-tabs">
@@ -24,7 +19,7 @@
     </div>
     <ul class="list-group">
         {% for theme in themes_undone %}
-            {% include '_theme_student.html' %}
+        {% include '_theme_block.html' %}
         {% endfor %}
     </ul>
 </div>
@@ -41,9 +36,18 @@
     </div>
     <ul class="list-group">
         {% for theme in themes_done %}
-            {% include '_theme_student.html' %}
+        {% include '_theme_block.html' %}
         {% endfor %}
     </ul>
+</div>
+{% endif %}
+
+{% if current_user.role.name == 'Teacher' %}
+<div class="theme-tabs">
+    <ul class="nav nav-tabs">
+        <li><a href="#">所有主题</a></li>
+    </ul>
+    {% include '_themes.html' %}
 </div>
 {% endif %}
 

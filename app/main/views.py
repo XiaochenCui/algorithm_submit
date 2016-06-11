@@ -23,6 +23,7 @@ def index():
 
     page = request.args.get('page', 1, type=int)
     show_followed = False
+    themes = None
     themes_undone = None
     themes_done = None
 
@@ -33,6 +34,9 @@ def index():
             # all()方法将Basequery对象转为list
             themes_done = current_user.done_themes.order_by(Theme.timestamp.desc()).all()
             themes_undone = [t for t in themes if t not in themes_done]
+
+        if current_user.role.name == 'Teacher':
+            themes = current_user.themes.order_by(Theme.timestamp.desc()).all()
 
         show_followed = bool(request.cookies.get('show_followed', ''))
 
@@ -48,6 +52,7 @@ def index():
 
     return render_template('index.html',
                            form=form,
+                           themes=themes,
                            themes_undone=themes_undone,
                            themes_done=themes_done,
                            posts=posts,
@@ -129,7 +134,7 @@ def edit(id):
         post.body = form.body.data
         db.session.add(post)
         flash('The post has been updated.')
-        return redirect(url_for('.post', id=post.id))
+        return redirect(url_for('.theme_student', id=post.theme_id))
     form.body.data = post.body
     return render_template('edit_post.html', form=form)
 
@@ -243,7 +248,7 @@ def manage_theme(id):
         theme = Theme(title=form.title.data, body=form.body.data, author=current_user._get_current_object())
         db.session.add(theme)
         return redirect(url_for('.manage_theme', id=id))
-    themes = user.themes.order_by(Theme.timestamp.desc()).all()
+    themes = current_user.themes.order_by(Theme.timestamp.desc()).all()
     return render_template('manage_theme.html', form=form, user=user, themes=themes)
 
 
@@ -292,11 +297,17 @@ def theme_teacher(id):
     return render_template('theme_teacher.html', themes=[theme], posts=posts)
 
 
-@main.route('/theme-student/<int:id>')
+@main.route('/theme-student/<int:id>', methods=['GET', 'POST'])
 @login_required
 def theme_student(id):
     theme = Theme.query.get_or_404(id)
+
+    post = current_user.query_post_with_theme_id(id)
+    if post:
+        return render_template('theme_student.html', post=post, themes=[theme])
+
     form = PostForm()
+
     if current_user.can(Permission.WRITE_ARTICLES) and \
             form.validate_on_submit():
         post = Post(body=form.body.data,
@@ -304,7 +315,8 @@ def theme_student(id):
                     author=current_user._get_current_object())
         db.session.add(post)
         return redirect(url_for('.theme', id=theme.id))
-    return render_template('theme.html', form=form, themes=[theme])
+
+    return render_template('theme_student.html', form=form, themes=[theme])
 
 
 @main.route('/theme-delete/<int:id>', methods=['GET', 'POST'])

@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 import hashlib
 
 from flask.ext.sqlalchemy import BaseQuery
@@ -82,7 +82,7 @@ class Follow(db.Model):
                             primary_key=True)
     followed_id = db.Column(db.Integer, db.ForeignKey('users.id'),
                             primary_key=True)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
 
 class User(UserMixin, db.Model):
@@ -98,8 +98,8 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(64))
     location = db.Column(db.String(64))
     about_me = db.Column(db.Text())
-    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
-    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
+    member_since = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    last_seen = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
 
     posts = db.relationship('Post', backref='author', lazy='dynamic')
@@ -244,7 +244,7 @@ class User(UserMixin, db.Model):
         return self.can(Permission.ADMINISTER)
 
     def ping(self):
-        self.last_seen = datetime.utcnow()
+        self.last_seen = datetime.datetime.utcnow()
         db.session.add(self)
 
     def gravatar(self, size=100, default='identicon', rating='g'):
@@ -294,6 +294,10 @@ class User(UserMixin, db.Model):
     def undone_themes(self):
         pass
 
+    def query_post_with_theme_id(self, theme_id:int):
+        return Post.query.join(Theme, Theme.id == Post.theme_id) \
+            .filter(Theme.id == theme_id).first()
+
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -320,7 +324,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
     theme_id = db.Column(db.Integer, db.ForeignKey('themes.id'))
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     score = db.Column(db.Integer)
@@ -364,7 +368,9 @@ class Theme(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
     body = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
+    release_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    deadline = db.Column(db.DateTime, default=datetime.datetime.utcnow() + datetime.timedelta(days=5))
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     posts = db.relationship('Post', backref='theme', lazy='joined')
 
@@ -398,7 +404,7 @@ class Article(db.Model):
     title = db.Column(db.String(64))
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     article_column_id = db.Column(db.Integer, db.ForeignKey('article_columns.id'))
     index = db.Column(db.Integer)

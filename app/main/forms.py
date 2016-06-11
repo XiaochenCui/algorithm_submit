@@ -8,8 +8,8 @@ from ..models import Role, User
 
 
 class NameForm(Form):
-    name = StringField('What is your name?', validators=[Required()])
-    submit = SubmitField('Submit')
+    name = StringField('正文:', validators=[Required()])
+    submit = SubmitField('提交')
 
 
 class EditProfileForm(Form):
@@ -51,8 +51,8 @@ class EditProfileAdminForm(Form):
 
 
 class PostForm(Form):
-    body = PageDownField("What's on your mind?", validators=[Required()])
-    submit = SubmitField('Submit')
+    body = PageDownField("正文:", validators=[Required()])
+    submit = SubmitField('提交')
 
 
 class ThemeForm(Form):

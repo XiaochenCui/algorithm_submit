@@ -29,6 +29,8 @@ class Config:
 
     PORTRAIT_DOMAIN = "http://gravatar.duoshuo.com/avatar"
 
+    PRODUCTION = False
+
     @staticmethod
     def init_app(app):
         pass
@@ -47,6 +49,7 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
+    PRODUCTION = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 
