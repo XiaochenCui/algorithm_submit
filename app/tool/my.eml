@@ -1,0 +1,33 @@
+Content-Type: multipart/mixed; boundary="===============2164253956950350943=="
+MIME-Version: 1.0
+Date: Thu, 02 Jun 2016 19:02:00 +0800
+From: =?utf-8?q?cxc?= <jcnlcxc@163.com>
+To: jcnlcxc@163.com
+Subject: 
+
+This is a multi-part message in MIME format.
+--===============2164253956950350943==
+Content-Type: multipart/related; boundary="===============8686643603132703519=="
+MIME-Version: 1.0
+
+--===============8686643603132703519==
+Content-Type: multipart/alternative; boundary="===============1887752240042179111=="
+MIME-Version: 1.0
+
+--===============1887752240042179111==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+
+
+--===============1887752240042179111==
+Content-Type: text/html; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+
+
+--===============1887752240042179111==--
+
+--===============8686643603132703519==--
+
+--===============2164253956950350943==--
