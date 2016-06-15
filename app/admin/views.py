@@ -5,7 +5,9 @@ import flask_admin as admin
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import expose
 from flask_admin.base import MenuLink, Admin, BaseView, expose
+from flask_admin import form
 
+from app import file_path
 from app.models import *
 
 
@@ -36,20 +38,47 @@ class UserView(AdminModelView):
     column_exclude_list = ['password_hash', 'member_since', 'last_seen',
                            'avatar_hash',]
 
-    # inline 编辑
+    # inline model
     inline_models = (Post, Theme)
 
 
 class ThemeView(AdminModelView):
     # 不可见的列
     column_exclude_list = ['timestamp']
-    # inline 编辑
+    # inline model
     inline_models = (Post,)
-
-
-class ColumnView(AdminModelView):
     # inline 编辑
+    column_editable_list = ['title']
+
+
+class ArticleColumnView(AdminModelView):
+    # inline model
     inline_models = (Article,)
+    # inline 编辑
+    column_editable_list = ['title']
+
+
+class FileView(AdminModelView):
+    # Override form field to use Flask-Admin FileUploadField
+    form_overrides = {
+        'path': form.FileUploadField
+    }
+
+    # Pass additional parameters to 'path' to FileUploadField constructor
+    form_args = {
+        'path': {
+            'label': 'File',
+            'base_path': file_path,
+            'allow_overwrite': False
+        }
+    }
+
+
+class FileColumnView(AdminModelView):
+    # inline model
+    inline_models = (File,)
+    # inline 编辑
+    column_editable_list = ['title']
 
 
 class MyAdminIndexView(admin.AdminIndexView):
@@ -86,4 +115,6 @@ admin.add_view(AdminModelView(Follow, db.session))
 admin.add_view(AdminModelView(Post, db.session))
 admin.add_view(ThemeView(Theme, db.session))
 admin.add_view(AdminModelView(Article, db.session))
-admin.add_view(ColumnView(ArticleColumn, db.session))
+admin.add_view(ArticleColumnView(ArticleColumn, db.session))
+admin.add_view(FileView(File, db.session))
+admin.add_view(FileColumnView(FileColumn, db.session))

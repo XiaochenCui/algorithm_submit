@@ -4,19 +4,21 @@
 
 {% block page_content %}
 <div class="nav">
-    <ul class="nav nav-pills nav-stacked nav_article">
+    <ul class="nav nav-pills nav-stacked nav_article list-inline">
         {% for article in articles %}
-        <li><a href="{{ url_for('main.article_column', c_id=column.id, a_id=article.id) }}">{{ article.title }}</a></li>
+        <li {% if article.index == 1 %}class="active"{% endif %}><a data-toggle="tab" href="#{{ article.id }}">{{ article.title }}</a></li>
         {% endfor %}
     </ul>
 </div>
-<div class="article">
-    <div class="article-body">
+<div class="tab-content article">
+    {% for article in articles %}
+    <div id="{{ article.id }}" class="tab-pane fade {% if article.index == 1 %}in active{% endif %} article-body">
         {% if article.body_html %}
         {{ article.body_html | safe }}
         {% else %}
         {{ article.body }}
         {% endif %}
     </div>
+    {% endfor %}
 </div>
 {% endblock %}

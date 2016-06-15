@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}{{ super() }}{{ column.title }}{% endblock %}
+
+{% block page_content %}
+{% for file in files %}
+        <li><a href="{{ url_for('.file_download') }}{{file.path}}" download>{{ file.name }}</a></li>
+{% endfor %}
+{% endblock %}

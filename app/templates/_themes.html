@@ -9,7 +9,7 @@
         <div class="theme-content">
             <div class="theme-date">{{ moment(theme.timestamp).fromNow() }}</div>
             <div class="theme-author">
-                <a href="{{ url_for('.user', username=theme.author.username) }}">
+                <a href="{{ url_for('.theme', id=theme.id) }}">
                     {{ theme.title }}
                 </a>
             </div>
@@ -31,3 +31,8 @@
     </li>
     {% endfor %}
 </ul>
+{% if current_user.id == themes[0].author.id %}
+<a href="{{ url_for('main.manage_theme', id=current_user.id) }}">
+    <button class="btn btn-primary" type="button">添加课题</button>
+</a>
+{% endif %}

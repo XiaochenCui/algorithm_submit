@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, request, session
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.bootstrap import Bootstrap
@@ -21,6 +23,13 @@ pagedown = PageDown()
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
+
+# 创建files文件夹
+file_path = os.path.join(os.path.dirname(__file__), 'files')
+try:
+    os.mkdir(file_path)
+except OSError:
+    pass
 
 
 def create_app(config_name):

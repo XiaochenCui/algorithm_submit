@@ -13,10 +13,10 @@ class NameForm(Form):
 
 
 class EditProfileForm(Form):
-    name = StringField('Real name', validators=[Length(0, 64)])
-    location = StringField('Location', validators=[Length(0, 64)])
-    about_me = TextAreaField('About me')
-    submit = SubmitField('Submit')
+    name = StringField('姓名', validators=[Length(0, 64)])
+    location = StringField('地址', validators=[Length(0, 64)])
+    about_me = TextAreaField('关于我')
+    submit = SubmitField('提交')
 
 
 class EditProfileAdminForm(Form):
@@ -42,12 +42,12 @@ class EditProfileAdminForm(Form):
     def validate_email(self, field):
         if field.data != self.user.email and \
                 User.query.filter_by(email=field.data).first():
-            raise ValidationError('Email already registered.')
+            raise ValidationError('邮箱已经被注册')
 
     def validate_username(self, field):
         if field.data != self.user.username and \
                 User.query.filter_by(username=field.data).first():
-            raise ValidationError('Username already in use.')
+            raise ValidationError('用户名已被使用')
 
 
 class PostForm(Form):
@@ -56,9 +56,9 @@ class PostForm(Form):
 
 
 class ThemeForm(Form):
-    title = StringField('Theme body:', validators=[Required()])
-    body = TextAreaField("Theme context:", validators=[Required()])
-    submit = SubmitField('Submit')
+    title = StringField('课题名称:', validators=[Required()])
+    body = TextAreaField("课题内容:", validators=[Required()])
+    submit = SubmitField('提交')
 
 
 class ColumnTitleForm(Form):

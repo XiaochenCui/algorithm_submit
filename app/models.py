@@ -405,9 +405,11 @@ class Article(db.Model):
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    article_column_id = db.Column(db.Integer, db.ForeignKey('article_columns.id'))
     index = db.Column(db.Integer)
+
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    article_column_id = db.Column(db.Integer, db.ForeignKey('article_columns.id'))
 
     def __repr__(self):
         return '<Article %r>' % self.title
@@ -432,7 +434,27 @@ class ArticleColumn(db.Model):
     __tablename__ = 'article_columns'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
-    article = db.relationship('Article', backref='column', lazy='dynamic')
+    articles = db.relationship('Article', backref='column', lazy='dynamic')
 
     def __repr__(self):
         return '<Article_Column %r>' % self.title
+
+
+class File(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Unicode(64))
+    path = db.Column(db.Unicode(128))
+    file_column_id = db.Column(db.Integer, db.ForeignKey('file_columns.id'))
+
+    def __unicode__(self):
+        return self.name
+
+
+class FileColumn(db.Model):
+    __tablename__ = 'file_columns'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64))
+    files = db.relationship('File', backref='column', lazy='dynamic')
+
+    def __repr__(self):
+        return '<File_Column %r>' % self.title

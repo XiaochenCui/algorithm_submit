@@ -1,3 +1,5 @@
+import os
+
 from flask import render_template, redirect, url_for, abort, flash, request, \
     current_app, make_response, jsonify
 from flask.ext.login import login_required, current_user
@@ -6,7 +8,7 @@ from . import main
 from .forms import *
 from .. import db
 from ..decorators import admin_required, permission_required
-from ..models import Permission, Role, User, Post, Theme, Article, ArticleColumn, Follow
+from ..models import *
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -301,12 +303,11 @@ def theme_teacher(id):
 @login_required
 def theme_student(id):
     theme = Theme.query.get_or_404(id)
-
     post = current_user.query_post_with_theme_id(id)
+    form = PostForm()
+
     if post:
         return render_template('theme_student.html', post=post, themes=[theme])
-
-    form = PostForm()
 
     if current_user.can(Permission.WRITE_ARTICLES) and \
             form.validate_on_submit():
@@ -314,7 +315,7 @@ def theme_student(id):
                     theme=theme,
                     author=current_user._get_current_object())
         db.session.add(post)
-        return redirect(url_for('.theme', id=theme.id))
+        return redirect(url_for('.theme_student', id=theme.id))
 
     return render_template('theme_student.html', form=form, themes=[theme])
 
@@ -355,18 +356,28 @@ def theme_edit(id):
 
 
 @main.route('/column/<int:c_id>')
-@main.route('/column/<int:c_id>/<int:a_id>')
-def article_column(c_id, a_id:int = None):
+def article_column(c_id):
     column = ArticleColumn.query.filter_by(id=c_id).first()
-    articles_queryset = Article.query.filter_by(column=column)
-    articles = articles_queryset.all()
-    article = articles_queryset.filter_by(id=a_id).first()
-    if not article:
-        article = articles_queryset.first()
+    articles= Article.query.filter_by(column=column).all()
     return render_template('column.html',
                            column=column,
-                           articles=articles,
-                           article=article)
+                           articles=articles)
+
+
+@main.route('/file_column/<int:c_id>')
+def file_column(c_id):
+    column = FileColumn.query.filter_by(id=c_id).first()
+    files= File.query.filter_by(column=column).all()
+    return render_template('file_column.html',
+                           column=column,
+                           files=files)
+
+
+@main.route('/static/data/')
+def file_download():
+    pass
+    # files = File.query.filter_by(id=id).first()
+    # return files.path
 
 
 @main.route('/column_list')
@@ -376,18 +387,6 @@ def column_list():
     form = ColumnTitleForm()
     columns = ArticleColumn.query.all()
     return render_template('column_list.html', columns=columns, form=form)
-
-
-@main.route('/article_list/<int:id>')
-@admin_required
-def article_list(id):
-    pass
-
-
-@main.route('/article_edit')
-@admin_required
-def article_edit(id):
-    pass
 
 
 @main.route('/column_delete')
@@ -420,6 +419,17 @@ def column_add():
     else:
         flash('栏目添加失败！')
     return redirect(url_for(column_list))
+
+
+# A download endpoint, to download the file
+@main.route('/download/<object_name>')
+def download(object_name):
+    my_object = File.query.filter_by(name=object_name).first()
+    if my_object:
+        download_url = my_object.path
+        return url_for('static', filename='files/'+download_url)
+    else:
+        abort(404, "File doesn't exist")
 
 
 

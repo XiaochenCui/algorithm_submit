@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "_macros.html" as macros %}
 
-{% block title %}{{ super() }}主题{% endblock %}
+{% block title %}{{ super() }}{{themes[0].title}}{% endblock %}
 
 {% block page_content %}
 <div class="content">
@@ -28,13 +28,8 @@
         </a>
         {% endif %}
     </div>
-</div>
-{% else %}
-<form class="post">
-    <div class="form-group form-post">
-        {{ wtf.quick_form(form) }}
-    </div>
-</form>
-{% endif %}
+    {% else %}
+    {{ wtf.quick_form(form) }}
+    {% endif %}
 </div>
 {% endblock %}

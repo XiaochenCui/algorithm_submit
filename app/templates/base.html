@@ -30,6 +30,9 @@
                 {% for column in ArticleColumn.query.all() %}
                     <li><a href="{{ url_for('main.article_column', c_id=column.id) }}">{{ column.title }}</a></li>
                 {% endfor %}
+                {% for column in FileColumn.query.all() %}
+                    <li><a href="{{ url_for('main.file_column', c_id=column.id) }}">{{ column.title }}</a></li>
+                {% endfor %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
