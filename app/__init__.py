@@ -25,7 +25,7 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 
 # 创建files文件夹
-file_path = os.path.join(os.path.dirname(__file__), 'files')
+file_path = os.path.join(os.path.dirname(__file__), 'static/data')
 try:
     os.mkdir(file_path)
 except OSError:
