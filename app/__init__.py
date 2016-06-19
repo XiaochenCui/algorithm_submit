@@ -24,6 +24,9 @@ pagedown = PageDown()
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
+login_manager.login_message = '请登录'
+login_manager.needs_refresh_message = '请重新验证'
+
 
 # 创建files文件夹
 file_path = os.path.join(os.path.dirname(__file__), 'static/data')
