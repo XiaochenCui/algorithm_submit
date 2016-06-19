@@ -113,7 +113,6 @@ div.article{
 div.themes-undone, div.themes-done{
     display: inline-table;
     width: 30%;
-    margin-top: 20px;
     margin-right: 40px;
 }
 
@@ -124,4 +123,8 @@ form.post {
 div.content {
     width: 80%;
     margin: 0 auto;
+}
+
+a.btn {
+    margin-left: 5px;
 }

@@ -3,7 +3,16 @@
 {% block title %}{{ super() }}{{ column.title }}{% endblock %}
 
 {% block page_content %}
-{% for file in files %}
-        <li><a href="{{ url_for('.file_download') }}{{file.path}}" download>{{ file.name }}</a></li>
-{% endfor %}
+<!-- 标题 -->
+<div class="row">
+    <div class="col-lg-12">
+        <h3>文件列表</h3>
+    </div>
+</div>
+<!-- 结束 -->
+<ul class="list-group">
+    {% for file in files %}
+    <li class="list-group-item"><a href="{{ url_for('.file_download') }}{{file.path}}" download>{{ file.name }}</a></li>
+    {% endfor %}
+</ul>
 {% endblock %}

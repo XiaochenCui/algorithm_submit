@@ -1,0 +1,13 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=Youdao Dict
+Name[zh_CN]=有道词典
+Name[zh_TW]=有道詞典
+Exec=youdao-dict %f
+Icon=youdao-dict
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Encoding=UTF-8
+Categories=Application;Utility;Dictionary;
+StartupNotify=false

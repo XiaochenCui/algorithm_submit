@@ -17,6 +17,7 @@ from flask_admin import Admin
 bootstrap = Bootstrap()
 mail = Mail()
 moment = Moment()
+
 db = SQLAlchemy()
 pagedown = PageDown()
 

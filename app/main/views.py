@@ -51,12 +51,15 @@ def index():
         error_out=False)
     posts = pagination.items
 
+    # 最新的四个课题
+    themes_last = Theme.query.order_by(Theme.timestamp.desc())[:4]
 
     return render_template('index.html',
                            form=form,
                            themes=themes,
                            themes_undone=themes_undone,
                            themes_done=themes_done,
+                           themes_last=themes_last,
                            posts=posts,
                            show_followed=show_followed,
                            pagination=pagination)
