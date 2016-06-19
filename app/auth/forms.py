@@ -21,7 +21,7 @@ class RegistrationForm(Form):
         Required(), Length(1, 64), Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
                                           '用户名只能使用数字,字母,下划线和 . ,并以字母开头')])
     password = PasswordField('密码', validators=[
-        Required(), EqualTo('password2', message='Passwords must match.')])
+        Required(), EqualTo('password2', message='两次输入的密码必须相同')])
     password2 = PasswordField('确认密码', validators=[Required()])
 
     submit = SubmitField('注册')
@@ -38,7 +38,7 @@ class RegistrationForm(Form):
 class ChangePasswordForm(Form):
     old_password = PasswordField('旧密码', validators=[Required()])
     password = PasswordField('新密码', validators=[
-        Required(), EqualTo('password2', message='Passwords must match')])
+        Required(), EqualTo('password2', message='两次输入的密码必须相同')])
     password2 = PasswordField('确认新密码', validators=[Required()])
     submit = SubmitField('提交')
 
@@ -53,13 +53,13 @@ class PasswordResetForm(Form):
     email = StringField('邮箱', validators=[Required(), Length(1, 64),
                                              Email()])
     password = PasswordField('新密码', validators=[
-        Required(), EqualTo('password2', message='Passwords must match')])
+        Required(), EqualTo('password2', message='两次输入的密码必须相同')])
     password2 = PasswordField('确认新密码', validators=[Required()])
     submit = SubmitField('提交')
 
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first() is None:
-            raise ValidationError('Unknown email address.')
+            raise ValidationError('邮箱不存在')
 
 
 class ChangeEmailForm(Form):
