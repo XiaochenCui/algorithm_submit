@@ -53,6 +53,8 @@ def index():
 
     # 最新的四个课题
     themes_last = Theme.query.order_by(Theme.timestamp.desc())[:4]
+    for theme in themes_last:
+        print(theme.title)
 
     return render_template('index.html',
                            form=form,
