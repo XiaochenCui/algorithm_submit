@@ -75,3 +75,5 @@ target/
 *.py~
 
 wsgi_conf.ini*
+
+*.sqlite
