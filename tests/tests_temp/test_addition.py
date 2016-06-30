@@ -20,6 +20,7 @@ class AdditionModelTestCase(unittest.TestCase):
         self.app = create_app('testing')
         self.app_context = self.app.app_context()
         self.app_context.push()
+        self.app.config['SERVER_NAME'] = 'flasky_server'
         db.create_all()
         Role.insert_roles()
 
