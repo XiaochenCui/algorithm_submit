@@ -77,3 +77,5 @@ target/
 wsgi_conf.ini*
 
 *.sqlite
+
+*.eml
