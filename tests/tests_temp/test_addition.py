@@ -12,7 +12,7 @@ from app import create_app, db
 from app.models import User, AnonymousUser, Role, Permission, Follow
 
 from app.tool.send_mail import send_email,send_163
-from app.email import send_email
+from app.email import send_email_test
 
 
 class AdditionModelTestCase(unittest.TestCase):
@@ -36,5 +36,5 @@ class AdditionModelTestCase(unittest.TestCase):
                     username=username,
                     password=password)
         token = user.generate_confirmation_token()
-        send_email(user.email, '验证你的帐号',
+        send_email_test(user.email, '验证你的帐号',
                    'auth/email/confirm', user=user, token=token)
