@@ -1,3 +1,4 @@
+import socket
 import unittest
 import time
 from datetime import datetime
@@ -30,11 +31,10 @@ class AdditionModelTestCase(unittest.TestCase):
 
     def test_mail_send(self):
         new_email = '1074976039@qq.com'
-        username = 'cxc_test'
-        password = '123'
-        user = User(email=new_email,
-                    username=username,
-                    password=password)
-        token = user.generate_confirmation_token()
-        send_email_test(user.email, '验证你的帐号',
-                   'auth/email/confirm', user=user, token=token)
+        app = current_app._get_current_object()
+        host_ip = socket.gethostbyname(socket.gethostname())
+        msg = Message(host_ip, recipients=[new_email])
+        msg.body = '测试_body'
+        msg.html = '测试_html'
+        with app.app_context():
+            send_163(msg)
