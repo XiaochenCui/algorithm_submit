@@ -53,11 +53,11 @@ class AdditionModelTestCase(unittest.TestCase):
         app = current_app._get_current_object()
         msg = Message('[Flasky]' + subject,
                       recipients=[to])
-        # msg.body = render_template(template + '.txt', **kwargs)
-        # msg.html = render_template(template + '.html', **kwargs)
+        msg.body = render_template(template + '.txt', **kwargs)
+        msg.html = render_template(template + '.html', **kwargs)
 
         # msg = Message(subject, recipients=[to])
-        msg.body = '测试1_body'
-        msg.html = '测试1_html'
+        # msg.body = '测试1_body'
+        # msg.html = '测试1_html'
         with app.app_context():
             send_163(msg)
