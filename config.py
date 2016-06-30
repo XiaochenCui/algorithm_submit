@@ -25,7 +25,7 @@ class Config:
     MAIL_USERNAME = "jcnlcxc@163.com"
     MAIL_PASSWORD = "kwbqigipjxemawhl"
     FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
-    FLASKY_MAIL_SENDER = 'Flasky Admin <jcnlcxc@163.com>'
+    FLASKY_MAIL_SENDER = 'Flasky Admin'
     FLASKY_ADMIN = "jcnlcxc@163.com"
 
     PORTRAIT_DOMAIN = "http://gravatar.duoshuo.com/avatar"
