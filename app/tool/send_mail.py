@@ -121,9 +121,9 @@ if __name__ == '__main__':
         </html>
         """.format(text)  # template
 
-    msg = Message('test',)
-    msg.body = 'testbody'
-    msg.html = 'testhtml'
+    msg = Message(subject=subject,)
+    msg.body = text
+    msg.html = html
 
     send_163(msg,
              recipient_addr=recipient_addr,

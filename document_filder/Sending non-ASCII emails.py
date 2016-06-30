@@ -94,7 +94,7 @@ if __name__ == '__main__':
     sender_addr = 'jcnlcxc@163.com'
     smtp = 'smtp.163.com'
     port = '25'
-    recipient_addr = ['jcnlcxc@163.com']
+    recipient_addr = ['1074976039@qq.com', 'jcnlcxc@126.com', 'jcnlcxc.new@gmail.com']
     subject = 'Żółta kartka'
     text = "Wiadomość testowa"
     html = """
