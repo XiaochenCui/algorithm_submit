@@ -4,7 +4,7 @@
 
 请点击链接完成认证：
 
-{{ url_for('auth.confirm', token=token, _external=True) }}
+
 
 衷心感谢您的加入！
 

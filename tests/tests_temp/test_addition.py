@@ -1,6 +1,8 @@
 import unittest
 import time
 from datetime import datetime
+
+from flask.ext.login import current_user
 from sqlalchemy.exc import IntegrityError
 from app import mail
 from flask import current_app, render_template
@@ -10,6 +12,7 @@ from app import create_app, db
 from app.models import User, AnonymousUser, Role, Permission, Follow
 
 from app.tool.send_mail import send_email,send_163
+from app.email import send_email
 
 
 class AdditionModelTestCase(unittest.TestCase):
@@ -26,26 +29,12 @@ class AdditionModelTestCase(unittest.TestCase):
         self.app_context.pop()
 
     def test_mail_send(self):
-        recipient_addr = ['jcnlcxc@163.com']
-        subject = 'Żółta kartka'
-        text = "Wiadomość testowa"
-        html = """
-                <html>
-                <head>
-                <meta http-equiv="content-type" content="text/html;charset=utf-8" />
-                </head>
-                <body>
-                <font face="verdana" size=2>{}<br/></font>
-                <img src="cid:image0" border=0 />
-                </body>
-                </html>
-                """.format(text)  # template
-
-        msg = Message(subject=subject, )
-        msg.body = text
-        msg.html = html
-
-        send_163(msg,
-                 recipient_addr=recipient_addr,
-                 fn='my.eml',
-                 save=True)
+        new_email = '1074976039@qq.com'
+        username = 'cxc_test'
+        password = '123'
+        user = User(email=new_email,
+                    username=username,
+                    password=password)
+        token = user.generate_confirmation_token()
+        send_email(user.email, '验证你的帐号',
+                   'auth/email/confirm', user=user, token=token)
