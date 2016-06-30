@@ -56,7 +56,6 @@ def register():
         db.session.add(user)
         db.session.commit()
         token = user.generate_confirmation_token()
-        print(url_for('auth.confirm', token=token, _external=True))
         send_email(user.email, '验证你的帐号',
                    'auth/email/confirm', user=user, token=token)
         flash('验证邮件已发送')
