@@ -52,7 +52,7 @@ class AdditionModelTestCase(unittest.TestCase):
     def send_email_test(self, to, subject, template, **kwargs):
         app = current_app._get_current_object()
         msg = Message('[Flasky]' + subject,
-                      sender='Flasky Admin <flasky@example.com>', recipients=[to])
+                      recipients=[to])
         # msg.body = render_template(template + '.txt', **kwargs)
         # msg.html = render_template(template + '.html', **kwargs)
 
