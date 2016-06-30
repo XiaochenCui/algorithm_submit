@@ -12,8 +12,7 @@ from flask.ext.mail import Message
 from app import create_app, db
 from app.models import User, AnonymousUser, Role, Permission, Follow
 
-from app.tool.send_mail import send_email,send_163
-from app.email import send_email_test
+from app.tool.send_mail import send_163
 
 
 class AdditionModelTestCase(unittest.TestCase):
@@ -33,8 +32,32 @@ class AdditionModelTestCase(unittest.TestCase):
         new_email = '1074976039@qq.com'
         app = current_app._get_current_object()
         host_ip = socket.gethostbyname(socket.gethostname())
+        template = 'auth/email/confirm'
+        username = 'cxc_test'
+        password = '123'
+        user = User(email=new_email,
+                    username=username,
+                    password=password)
+        token = user.generate_confirmation_token()
+
         msg = Message(host_ip, recipients=[new_email])
         msg.body = '测试_body'
         msg.html = '测试_html'
+
+        # with app.app_context():
+        #     send_163(msg)
+
+        self.send_email_test(new_email, host_ip, template, user=user, token=token)
+
+    def send_email_test(self, to, subject, template, **kwargs):
+        app = current_app._get_current_object()
+        msg = Message(app.config['FLASKY_MAIL_SUBJECT_PREFIX'] + ' ' + subject,
+                      sender=app.config['FLASKY_MAIL_SENDER'], recipients=[to])
+        msg.body = render_template(template + '.txt', **kwargs)
+        msg.html = render_template(template + '.html', **kwargs)
+
+        # msg = Message(subject, recipients=[to])
+        # msg.body = '测试1_body'
+        # msg.html = '测试1_html'
         with app.app_context():
             send_163(msg)
