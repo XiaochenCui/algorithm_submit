@@ -51,8 +51,8 @@ class AdditionModelTestCase(unittest.TestCase):
 
     def send_email_test(self, to, subject, template, **kwargs):
         app = current_app._get_current_object()
-        msg = Message('[Flasky]' + subject,
-                      recipients=[to])
+        msg = Message(app.config['FLASKY_MAIL_SUBJECT_PREFIX'] + ' ' + subject,
+                      sender=app.config['FLASKY_MAIL_SENDER'], recipients=[to])
         msg.body = render_template(template + '.txt', **kwargs)
         msg.html = render_template(template + '.html', **kwargs)
 
